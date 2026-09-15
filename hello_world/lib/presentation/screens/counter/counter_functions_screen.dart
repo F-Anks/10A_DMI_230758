@@ -10,7 +10,6 @@ class CounterFunctionsScreen extends StatefulWidget {
 }
 
 class _CounterFunctionsScreenState extends State<CounterFunctionsScreen> {
-
   int clickCounter = 0;
 
   Color _getCounterColor(int value) {
@@ -29,14 +28,14 @@ class _CounterFunctionsScreenState extends State<CounterFunctionsScreen> {
       appBar: AppBar(
         title: const Text('Counter Functions'),
         actions: [
-        IconButton(
-          icon: Icon( Icons.refresh_rounded),
-          onPressed: () {
-            setState(() {
-              clickCounter = 0;
-            });
-          },
-        ),
+          IconButton(
+            icon: Icon(Icons.refresh_rounded),
+            onPressed: () {
+              setState(() {
+                clickCounter = 0;
+              });
+            },
+          ),
         ],
       ),
       body: Center(
@@ -44,21 +43,21 @@ class _CounterFunctionsScreenState extends State<CounterFunctionsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-            Text(
-              '$clickCounter',
-              style: GoogleFonts.comicNeue(
-                fontSize: 160,
-                fontWeight: FontWeight.w100,
-                color: _getCounterColor(clickCounter),
+              Text(
+                '$clickCounter',
+                style: GoogleFonts.comicNeue(
+                  fontSize: 160,
+                  fontWeight: FontWeight.w100,
+                  color: _getCounterColor(clickCounter),
+                ),
               ),
-            ),
-            Text(
-              'Click${ clickCounter == 1 || clickCounter == -1 ? '' : 's' }',
-              style: const TextStyle(fontSize: 25),
-            ),
+              Text(
+                'Click${clickCounter == 1 || clickCounter == -1 ? '' : 's'}',
+                style: const TextStyle(fontSize: 25),
+              ),
             ],
           ),
-        )
+        ),
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -91,7 +90,7 @@ class _CounterFunctionsScreenState extends State<CounterFunctionsScreen> {
             icon: Icons.refresh_outlined,
           ),
         ],
-      )
+      ),
     );
   }
 }
@@ -100,17 +99,10 @@ class CustomButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
 
-  const CustomButton({
-    super.key,
-    required this.icon,
-    required this.onPressed,
-  });
+  const CustomButton({super.key, required this.icon, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: onPressed,
-      child: Icon(icon),
-    );
+    return FloatingActionButton(onPressed: onPressed, child: Icon(icon));
   }
 }

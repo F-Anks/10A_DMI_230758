@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Arquitectura de hello_world",
+    "output": "hello_world-architecture.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/F-Anks/10A_DMI_230758.git",
+      "revision": "1a7812457ec1a56aa31b011c5b9751add61ed1ad"
+    }
+  },
+  "components": [
+    {
+      "id": "pubspec",
+      "type": "security",
+      "label": "pubspec.yaml / lock",
+      "sublabel": "Dependencias (google_fonts)",
+      "pos": [50, 300],
+      "size": [200, 68],
+      "sources": [{ "path": "hello_world/pubspec.yaml", "line": 1, "label": "archivo de configuración" }]
+    },
+    {
+      "id": "analysis",
+      "type": "security",
+      "label": "analysis_options.yaml",
+      "sublabel": "Linting y Reglas",
+      "pos": [50, 180],
+      "size": [200, 68]
+    },
+    {
+      "id": "docs",
+      "type": "backend",
+      "label": "README.md",
+      "sublabel": "Documentación Principal",
+      "pos": [50, 420],
+      "size": [200, 68]
+    },
+    {
+      "id": "test",
+      "type": "frontend",
+      "label": "test/",
+      "sublabel": "Pruebas unitarias/widgets",
+      "pos": [350, 100],
+      "size": [180, 68]
+    },
+    {
+      "id": "lib",
+      "type": "frontend",
+      "label": "lib/",
+      "sublabel": "main.dart",
+      "pos": [350, 300],
+      "size": [180, 68],
+      "sources": [{ "path": "hello_world/lib/main.dart", "line": 1, "label": "código fuente" }]
+    },
+    {
+      "id": "presentation",
+      "type": "frontend",
+      "label": "lib/presentation/",
+      "sublabel": "Pantallas y UI",
+      "pos": [350, 450],
+      "size": [180, 68]
+    },
+    {
+      "id": "android",
+      "type": "external",
+      "label": "android/",
+      "sublabel": "Destino Android",
+      "pos": [680, 80],
+      "size": [150, 50]
+    },
+    {
+      "id": "ios",
+      "type": "external",
+      "label": "ios/",
+      "sublabel": "Destino iOS",
+      "pos": [680, 160],
+      "size": [150, 50]
+    },
+    {
+      "id": "web",
+      "type": "external",
+      "label": "web/",
+      "sublabel": "Destino Web",
+      "pos": [680, 240],
+      "size": [150, 50]
+    },
+    {
+      "id": "windows",
+      "type": "external",
+      "label": "windows/",
+      "sublabel": "Destino Windows",
+      "pos": [680, 320],
+      "size": [150, 50]
+    },
+    {
+      "id": "linux",
+      "type": "external",
+      "label": "linux/",
+      "sublabel": "Destino Linux",
+      "pos": [680, 400],
+      "size": [150, 50]
+    },
+    {
+      "id": "macos",
+      "type": "external",
+      "label": "macos/",
+      "sublabel": "Destino macOS",
+      "pos": [680, 480],
+      "size": [150, 50]
+    }
+  ],
+  "connections": [
+    { "id": "pubspec-to-lib", "from": "pubspec", "to": "lib", "label": "provee paquetes", "labelAt": [200, 382] },
+    { "id": "analysis-to-lib", "from": "analysis", "to": "lib", "label": "analiza", "labelDy": 20 },
+    { "id": "test-to-lib", "from": "test", "to": "lib", "label": "verifica código", "fromSide": "bottom", "toSide": "top", "labelDy": 24 },
+    { "id": "lib-to-pres", "from": "lib", "to": "presentation", "label": "contiene", "fromSide": "bottom", "toSide": "top", "labelDy": 24 },
+    { "id": "lib-to-android", "from": "lib", "to": "android", "label": "compila a", "via": [[560, 334], [560, 105]], "labelDx": -40, "labelDy": -20 },
+    { "id": "lib-to-ios", "from": "lib", "to": "ios", "via": [[560, 334], [560, 185]] },
+    { "id": "lib-to-web", "from": "lib", "to": "web", "via": [[560, 334], [560, 265]] },
+    { "id": "lib-to-windows", "from": "lib", "to": "windows" },
+    { "id": "lib-to-linux", "from": "lib", "to": "linux", "via": [[560, 334], [560, 425]] },
+    { "id": "lib-to-macos", "from": "lib", "to": "macos", "via": [[560, 334], [560, 505]] }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Estructura del Proyecto Flutter",
+      "items": ["La lógica principal se encuentra en lib/ y lib/presentation/", "Soporte nativo para 6 plataformas diferentes", "Gestión de dependencias con pubspec.yaml"]
+    }
+  ]
+}
