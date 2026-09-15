@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:hello_world_app/main.dart';
 
 class CounterFunctionsScreen extends StatefulWidget {
   const CounterFunctionsScreen({super.key});
@@ -7,6 +9,19 @@ class CounterFunctionsScreen extends StatefulWidget {
   State<CounterFunctionsScreen> createState() => _CounterFunctionsScreenState();
 }
 
+class _CounterFunctionsScreenState extends State<CounterFunctionsScreen> {
+
+  int clickCounter = 0;
+
+  Color _getCounterColor(int value) {
+    if (value == 0) {
+      return counterZeroColor;
+    } else if (value > 0) {
+      return counterPositiveColor;
+    } else {
+      return counterNegativeColor;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +53,7 @@ class CounterFunctionsScreen extends StatefulWidget {
               ),
             ),
             Text(
-              "Click${ clickCounter > 1 ? 's' : '' }",
+              'Click${ clickCounter == 1 || clickCounter == -1 ? '' : 's' }',
               style: const TextStyle(fontSize: 25),
             ),
             ],
@@ -81,3 +96,21 @@ class CounterFunctionsScreen extends StatefulWidget {
   }
 }
 
+class CustomButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const CustomButton({
+    super.key,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: onPressed,
+      child: Icon(icon),
+    );
+  }
+}

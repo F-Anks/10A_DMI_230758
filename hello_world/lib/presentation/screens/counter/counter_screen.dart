@@ -30,7 +30,7 @@ class _CounterScreenState extends State<CounterScreen> {
               ),
             ),
             Text(
-              "Click${ clickCounter > 1 ? 's' : '' }",
+              'Click${ clickCounter == 1 || clickCounter == -1 ? '' : 's' }',
               style: const TextStyle(fontSize: 25),
             ),
           ],
@@ -55,6 +55,23 @@ class _CounterScreenState extends State<CounterScreen> {
           ),
         ],
       )
+    );
+  }
+}
+
+class CustomButton extends StatelessWidget {
+  final IconData icon;
+
+  const CustomButton({
+    super.key,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {},
+      child: Icon(icon),
     );
   }
 }
