@@ -1,0 +1,11 @@
+{
+  "command": "visual-check",
+  "status": "success",
+  "evidenceKind": "automated-browser",
+  "files": [
+    "hello_world-architecture.visual-check.1440x900.dark.png",
+    "hello_world-architecture.visual-check.1440x900.light.png",
+    "hello_world-architecture.visual-check.2048x1320.dark.png",
+    "hello_world-architecture.visual-check.2048x1320.light.png"
+  ]
+}
