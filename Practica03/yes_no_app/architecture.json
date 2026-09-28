@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "yes_no_app · Arquitectura",
+    "output": "architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {"id":"ext","type":"external","label":"Servicio externo","sublabel":"https://yesno.wtf/api","pos":[50,320],"size":[220,80]},
+    
+    {"id":"deps","type":"cloud","label":"Dependencias y recursos","sublabel":"pubspec.yaml; images/","pos":[350,50],"size":[490,80]},
+
+    {"id":"main","type":"frontend","label":"main.dart","sublabel":"MyApp; MaterialApp; AppTheme","pos":[890,180],"size":[220,80]},
+    {"id":"ui","type":"frontend","label":"ChatScreen","sublabel":"presentation/; MessageFieldBox","pos":[890,320],"size":[220,80]},
+
+    {"id":"provider","type":"backend","label":"ChatProvider","sublabel":"presentation/providers/chat_provider.dart","pos":[620,320],"size":[220,80]},
+    {"id":"helper","type":"backend","label":"GetYesNoAnswer","sublabel":"config/helpers/get_yes_no_answer.dart; Dio","pos":[350,320],"size":[220,80]},
+    
+    {"id":"model","type":"backend","label":"YesNoModel","sublabel":"infrastructure/models/yes_no_model.dart","pos":[350,470],"size":[220,80]},
+    {"id":"entity","type":"backend","label":"Message","sublabel":"domain/entities/message.dart; FromWho","pos":[620,470],"size":[220,80]},
+    
+    {"id":"proj","type":"backend","label":"Proyectos de plataforma","sublabel":"android/ ios/ linux/ macos/ web/ windows/","pos":[50,650],"size":[260,80]},
+    {"id":"build","type":"backend","label":"build/","sublabel":"Salida local de Flutter","pos":[350,650],"size":[220,80]},
+    {"id":"apk","type":"cloud","label":"app-debug.apk","sublabel":"build/app/outputs/flutter-apk/","pos":[620,650],"size":[260,80]}
+  ],
+  "boundaries": [
+    {"kind":"region","label":"Dependencias y recursos","wraps":["deps"],"pad":20},
+    {"kind":"region","label":"Flutter - lib/ - Codigo fuente Dart","wraps":["main","ui","provider","helper","model","entity"],"pad":20},
+    {"kind":"region","label":"Targets y salida compilada","wraps":["proj","build","apk"],"pad":20}
+  ],
+  "connections": [
+    {"id":"c1","from":"provider","to":"helper","label":"texto recortado termina en ?","fromSide":"left","toSide":"right","labelDy":-34},
+    {"id":"c2","from":"helper","to":"ext","label":"Dio; force yes/no/maybe","fromSide":"left","toSide":"right","labelDy":-34},
+    {"id":"c3","from":"helper","to":"model","label":"JSON a YesNoModel","fromSide":"bottom","toSide":"top","labelDy":-74},
+    {"id":"c4","from":"model","to":"entity","label":"toMessageEntity()","fromSide":"right","toSide":"left","labelDy":-34},
+    {"id":"c5","from":"entity","to":"provider","label":"agrega Message","fromSide":"top","toSide":"bottom"},
+    {"id":"c6","from":"provider","to":"ui","label":"notifica y actualiza el chat","fromSide":"right","toSide":"left","labelDy":-34},
+    {"id":"c7","from":"main","to":"ui","label":"inicia ChatScreen","fromSide":"bottom","toSide":"top","labelDy":-74},
+    {"id":"c8","from":"proj","to":"build","fromSide":"right","toSide":"left"},
+    {"id":"c9","from":"build","to":"apk","fromSide":"right","toSide":"left"}
+  ]
+}

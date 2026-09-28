@@ -141,7 +141,7 @@ Antes de ejecutar la aplicación, asegúrate de tener instalado en tu sistema:
 
 El diagrama completo de la arquitectura del proyecto fue generado con **Archify** y se encuentra disponible como un archivo HTML interactivo auto-contenido con soporte para tema claro/oscuro, zoom, y navegación por componentes:
 
-📎 **[Ver diagrama de arquitectura interactivo → `hello_world-architecture.html`](./architecture/hello_world-architecture.html)**
+📎 **[Ver diagrama de arquitectura interactivo (GitHub Pages) → `hello_world-architecture.html`](https://f-anks.github.io/10A_DMI_230758/Practica02/hello_world/architecture/hello_world-architecture.html)**
 
 > [!TIP]
 > El diagrama permite alternar entre tema oscuro y claro con la tecla `T`, hacer zoom con `+`/`-`, y navegar entre las vistas predefinidas ("Ciclo de vida completo" y "Gestión del estado") desde el menú lateral.
