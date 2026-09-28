@@ -3,42 +3,45 @@ import 'package:yes_no_app/config/helpers/get_yes_no_answer.dart';
 import 'package:yes_no_app/domain/entities/message.dart';
 
 class ChatProvider extends ChangeNotifier {
-  final chatScrollController = ScrollController();
   final getYesNoAnswer = GetYesNoAnswer();
+  final scrollController = ScrollController();
 
-  List<Message> messageList = [
-    Message(text: 'Hola amor!', fromWho: FromWho.me),
-    Message(text: 'Ya regresaste del trabajo?', fromWho: FromWho.me),
+  List<Message> messagesLists = [
+    Message(text: 'Hola como te va?', fromwho: Fromwho.me),
+    Message(text: 'cuando hace calor, quien te lo quita?', fromwho: Fromwho.me),
   ];
 
   Future<void> sendMessage(String text) async {
-    if (text.isEmpty) return;
+    final trimmedText = text.trim();
+    if (trimmedText.isEmpty) return;
 
-    final newMessage = Message(text: text, fromWho: FromWho.me);
-    messageList.add(newMessage);
-
-    if (text.endsWith('?')) {
-      herReply();
-    }
-
+    final message = Message(text: trimmedText, fromwho: Fromwho.me);
+    messagesLists.add(message);
     notifyListeners();
     moveScrollToBottom();
+
+    if (trimmedText.endsWith('?')) {
+      await herReply();
+    }
   }
 
   Future<void> herReply() async {
     final herMessage = await getYesNoAnswer.getAnswer();
-    messageList.add(herMessage);
+    messagesLists.add(herMessage);
     notifyListeners();
-
     moveScrollToBottom();
   }
 
   Future<void> moveScrollToBottom() async {
     await Future.delayed(const Duration(milliseconds: 100));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!scrollController.hasClients) return;
 
-    chatScrollController.animateTo(
-        chatScrollController.position.maxScrollExtent,
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut);
+        curve: Curves.easeOut,
+      );
+    });
   }
 }
