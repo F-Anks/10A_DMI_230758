@@ -132,6 +132,15 @@ La aplicación fue configurada exitosamente para ejecutarse en dispositivos fís
 
 ---
 
+## 🌐 Despliegue en GitHub Pages
+
+El proyecto también ha sido compilado para la web y desplegado utilizando **GitHub Pages**, lo que permite acceder a la aplicación desde cualquier navegador sin necesidad de instalación.
+
+Puedes interactuar con la aplicación en vivo a través del siguiente enlace:
+👉 **[Ver Yes No App en GitHub Pages](https://f-anks.github.io/10A_DMI_230758/)**
+
+---
+
 ## Conclusiones
 
 1. **Gestión de Estado Robusta:** Se comprendió la necesidad y eficacia de separar el estado de la UI utilizando el patrón Provider (`ChangeNotifier`), permitiendo que el árbol de widgets se actualice solo cuando es necesario (`notifyListeners()`).
