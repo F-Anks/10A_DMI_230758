@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "yes_no_app · Arquitectura y flujo",
+    "output": "architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      {"id":"arquitectura","label":"Capas y componentes","focus":["entry","ui","state","helper","model","entity","config","api"],"note":"Organización Clean Architecture y dependencias principales."},
+      {"id":"mensaje","label":"Ciclo del mensaje","focus":["entry","ui","state","helper","model","entity","api"],"note":"Desde el envío de una pregunta hasta el redibujado de la respuesta."}
+    ]
+  },
+  "components": [
+    {"id":"config","type":"backend","label":"app_theme.dart","sublabel":"AppTheme · Material 3","pos":[40,100],"size":[165,82],"tag":"Config · tema"},
+    {"id":"entry","type":"frontend","label":"main.dart","sublabel":"MultiProvider · inyecta ChatProvider","pos":[40,250],"size":[165,82],"tag":"Entrada"},
+    {"id":"ui","type":"frontend","label":"ChatScreen","sublabel":"ListView.builder · burbujas","pos":[300,250],"size":[165,82],"tag":"Presentation · UI"},
+    {"id":"state","type":"backend","label":"ChatProvider","sublabel":"ChangeNotifier · List<Message>","pos":[560,250],"size":[165,82],"tag":"Presentation · estado"},
+    {"id":"helper","type":"backend","label":"GetYesNoAnswer","sublabel":"Dio · selección de GIF","pos":[560,450],"size":[165,82],"tag":"Config · helper"},
+    {"id":"api","type":"external","label":"yesno.wtf/api","sublabel":"GET · answer, forced, image","pos":[820,450],"size":[165,82],"tag":"API externa"},
+    {"id":"model","type":"backend","label":"YesNoModel","sublabel":"fromJsonMap() · toMessageEntity()","pos":[820,650],"size":[165,82],"tag":"Infrastructure"},
+    {"id":"entity","type":"database","label":"Message","sublabel":"text · imageUrl? · fromwho","pos":[560,650],"size":[165,82],"tag":"Domain · entidad"}
+  ],
+  "boundaries": [],
+  "connections": [
+    {"id":"theme","from":"config","to":"entry","label":"tema Material 3","fromSide":"bottom","toSide":"top","labelDy":24},
+    {"id":"start-ui","from":"entry","to":"ui","label":"abre ChatScreen","fromSide":"right","toSide":"left","labelDy":-28},
+    {"id":"inject","from":"entry","to":"state","label":"ChangeNotifierProvider","fromSide":"bottom","toSide":"bottom","labelDy":40},
+    {"id":"input","from":"ui","to":"state","label":"sendMessage() · '?'","fromSide":"right","toSide":"left","labelAt":[489, 246]},
+    {"id":"request","from":"state","to":"helper","label":"getAnswer()","fromSide":"right","toSide":"right"},
+    {"id":"reply","from":"helper","to":"state","label":"Message + GIF local","fromSide":"left","toSide":"left"},
+    {"id":"http","from":"helper","to":"api","label":"HTTP GET","fromSide":"right","toSide":"left","labelAt":[800, 430]},
+    {"id":"json","from":"api","to":"model","label":"JSON de respuesta","fromSide":"bottom","toSide":"top","labelDy":24},
+    {"id":"map","from":"model","to":"entity","label":"Message limpio","fromSide":"left","toSide":"right","labelAt":[800, 630]},
+    {"id":"mapped","from":"entity","to":"helper","label":"entidad de dominio","fromSide":"right","toSide":"right"},
+    {"id":"refresh","from":"state","to":"ui","label":"notifyListeners()","variant":"emphasis","fromSide":"left","toSide":"right","labelAt":[480, 346]}
+  ],
+  "cards": [
+    {"dot":"cyan","title":"Flujo interactivo","items":["Pregunta con '?' → sendMessage() → mensaje del usuario en memoria","Dio consulta yesno.wtf; YesNoModel mapea el JSON a Message","Helper asigna GIF src/; ChatProvider agrega la respuesta, desplaza scroll y notifica"]},
+    {"dot":"emerald","title":"Ciclo de presentación","items":["ChatScreen observa ChatProvider y construye ListView.builder","Mensaje 'hers' → HerMessageDubble con texto e imagen","Sin '?', sendMessage() agrega solo el mensaje del usuario"]},
+    {"dot":"amber","title":"Detalle de implementación","items":["El helper elige yes/no/maybe y lo envía en query parameter force","La entidad también contiene sentAt; imageUrl es opcional","La respuesta del helper se agrega como fromwho.hers"]}
+  ]
+}

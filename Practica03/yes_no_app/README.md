@@ -58,6 +58,8 @@ Se pone énfasis en el uso del paquete `Provider` para la gestión del estado de
 
 El proyecto está diseñado bajo un enfoque de **Clean Architecture** estructurando las carpetas en capas lógicas:
 
+> 🗺️ **Diagrama Interactivo:** Puedes explorar el flujo y la arquitectura detallada abriendo el archivo [architecture.html](./architecture.html) en tu navegador.
+
 ```
 📦 yes_no_app/
 │
