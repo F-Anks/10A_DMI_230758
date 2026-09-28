@@ -54,11 +54,11 @@ Se pone énfasis en el uso del paquete `Provider` para la gestión del estado de
 
 ---
 
-## 🏗️ Estructura y Arquitectura del Proyecto
+## Estructura y Arquitectura del Proyecto
 
 El proyecto está diseñado bajo un enfoque de **Clean Architecture** estructurando las carpetas en capas lógicas:
 
-> 🗺️ **Diagrama Interactivo:** Puedes explorar el flujo y la arquitectura detallada abriendo el archivo [architecture.html](./architecture.html) en tu navegador.
+> **Diagrama Interactivo:** Puedes explorar el flujo y la arquitectura detallada abriendo el diagrama renderizado en **[architecture.html (GitHub Pages)](https://f-anks.github.io/10A_DMI_230758/Practica03/yes_no_app/architecture.html)** desde cualquier navegador web.
 
 ```
 📦 yes_no_app/
@@ -97,7 +97,7 @@ El proyecto está diseñado bajo un enfoque de **Clean Architecture** estructura
 
 ---
 
-## 📸 Resultados y Evidencias Visuales
+## Resultados y Evidencias Visuales
 
 A continuación se muestran capturas del funcionamiento de la aplicación, donde se observan burbujas de texto diferenciadas y la inserción de imágenes animadas (GIFs) en las respuestas.
 
@@ -130,16 +130,7 @@ La aplicación fue configurada exitosamente para ejecutarse en dispositivos fís
   <img src="src/prueba5.jpeg" alt="Icono de la App" width="300"/>
 </div>
 
----
 
-## 🌐 Despliegue en GitHub Pages
-
-El proyecto también ha sido compilado para la web y desplegado utilizando **GitHub Pages**, lo que permite acceder a la aplicación desde cualquier navegador sin necesidad de instalación.
-
-Puedes interactuar con la aplicación en vivo a través del siguiente enlace:
-👉 **[Ver Yes No App en GitHub Pages](https://f-anks.github.io/10A_DMI_230758/)**
-
----
 
 ## Conclusiones
 

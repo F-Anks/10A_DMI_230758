@@ -86,7 +86,7 @@ Antes de ejecutar la aplicación, asegúrate de tener instalado en tu sistema:
 
 ---
 
-## 🏗️ Arquitectura del Proyecto
+## Arquitectura del Proyecto
 
 ### Árbol de Directorios Completo
 
@@ -141,7 +141,7 @@ Antes de ejecutar la aplicación, asegúrate de tener instalado en tu sistema:
 
 El diagrama completo de la arquitectura del proyecto fue generado con **Archify** y se encuentra disponible como un archivo HTML interactivo auto-contenido con soporte para tema claro/oscuro, zoom, y navegación por componentes:
 
-📎 **[Ver diagrama de arquitectura interactivo (GitHub Pages) → `hello_world-architecture.html`](https://f-anks.github.io/10A_DMI_230758/Practica02/hello_world/architecture/hello_world-architecture.html)**
+**[Ver diagrama de arquitectura interactivo (GitHub Pages) → `hello_world-architecture.html`](https://f-anks.github.io/10A_DMI_230758/Practica02/hello_world/architecture/hello_world-architecture.html)**
 
 > [!TIP]
 > El diagrama permite alternar entre tema oscuro y claro con la tecla `T`, hacer zoom con `+`/`-`, y navegar entre las vistas predefinidas ("Ciclo de vida completo" y "Gestión del estado") desde el menú lateral.
@@ -200,7 +200,7 @@ Pantalla inicial desarrollada como primera iteración del contador. Contiene la 
 
 ---
 
-## 📸 Resultados y Evidencias Visuales
+## Resultados y Evidencias Visuales
 
 A continuación se presentan las capturas de pantalla tomadas durante las pruebas de ejecución en el emulador **Pixel 6 Pro**:
 
@@ -209,7 +209,7 @@ A continuación se presentan las capturas de pantalla tomadas durante las prueba
 El contador inicia en `0`. Se observa el color azul correspondiente a `counterZeroColor`, la leyenda en plural `"Clicks"` y la disponibilidad de los tres botones flotantes.
 
 <div align="center">
-  <img src="../src/image.png" alt="Estado Inicial - Valor Cero" width="700"/>
+  <img src="src/image.png" alt="Estado Inicial - Valor Cero" width="700"/>
 </div>
 
 ---
@@ -219,7 +219,7 @@ El contador inicia en `0`. Se observa el color azul correspondiente a `counterZe
 Al presionar el botón `+1` de manera consecutiva, el contador toma valores positivos (en este caso `67`). El texto adopta automáticamente el color verde (`counterPositiveColor`) y mantiene la leyenda `"Clicks"`.
 
 <div align="center">
-  <img src="../src/image2.png" alt="Estado Positivo - Incremento a 67" width="700"/>
+  <img src="src/image2.png" alt="Estado Positivo - Incremento a 67" width="700"/>
 </div>
 
 ---
@@ -229,7 +229,7 @@ Al presionar el botón `+1` de manera consecutiva, el contador toma valores posi
 Al presionar el botón de resta `-`, el contador disminuye hacia valores negativos (en este caso `-67`). El texto adopta dinámicamente el color rojo (`counterNegativeColor`) y refleja la pluralización correspondiente `"Clicks"`.
 
 <div align="center">
-  <img src="../src/image3.png" alt="Estado Negativo - Decremento a -67" width="700"/>
+  <img src="src/image3.png" alt="Estado Negativo - Decremento a -67" width="700"/>
 </div>
 
 ---
@@ -238,11 +238,11 @@ Al presionar el botón de resta `-`, el contador disminuye hacia valores negativ
 
 |     Estado del Contador     | Valor de Ejemplo |      Color Visualizado      | Texto Generado | Botón Accionado        |
 | :-------------------------: | :--------------: | :-------------------------: | :------------: | :---------------------- |
-| **Neutro / Inicial** |      `0`      |    🔵 Azul (`#07A4FF`)    |   `Clicks`   | Inicio o botón Refresh |
-| **Singular Positivo** |      `1`      | 🟢 Verde (`Colors.green`) |   `Click`   | Botón`+1`            |
-|  **Plural Positivo**  |      `67`      | 🟢 Verde (`Colors.green`) |   `Clicks`   | Botón`+1`            |
-| **Singular Negativo** |      `-1`      |  🔴 Rojo (`Colors.red`)  |   `Click`   | Botón`-`             |
-|  **Plural Negativo**  |     `-67`     |  🔴 Rojo (`Colors.red`)  |   `Clicks`   | Botón`-`             |
+| **Neutro / Inicial** |      `0`      |    Azul (`#07A4FF`)    |   `Clicks`   | Inicio o botón Refresh |
+| **Singular Positivo** |      `1`      | Verde (`Colors.green`) |   `Click`   | Botón`+1`            |
+|  **Plural Positivo**  |      `67`      | Verde (`Colors.green`) |   `Clicks`   | Botón`+1`            |
+| **Singular Negativo** |      `-1`      |  Rojo (`Colors.red`)  |   `Click`   | Botón`-`             |
+|  **Plural Negativo**  |     `-67`     |  Rojo (`Colors.red`)  |   `Clicks`   | Botón`-`             |
 
 ---
 
