@@ -32,3 +32,6 @@
 **/.idea/
 **/.vscode/
 **/*.iml
+
+# Excluir videos pesados que fallan en Github (por límite de 100MB)
+Practica04/tistos/assets/videos/*.mp4
