@@ -7,10 +7,14 @@ import 'package:tistos/domain/entities/video_post.dart';
 class VideoButtons extends StatelessWidget {
 
   final VideoPost video;
+  final bool isMuted;
+  final VoidCallback onToggleMute;
 
   const VideoButtons({
     super.key, 
-    required this.video
+    required this.video,
+    required this.isMuted,
+    required this.onToggleMute,
   });
 
   @override
@@ -22,11 +26,16 @@ class VideoButtons extends StatelessWidget {
         _CustomIconButton( value: video.views, iconData: Icons.remove_red_eye_outlined ),
 
         const SizedBox( height: 20 ),
-        SpinPerfect(
-          infinite: true,
-          duration: const Duration( seconds: 5),
-          child: const _CustomIconButton( value: 0, iconData: Icons.play_circle_outline )
-        ),
+        
+        // Mute button
+        IconButton(
+          onPressed: onToggleMute,
+          icon: Icon(
+            isMuted ? Icons.volume_off : Icons.volume_up, 
+            color: Colors.white, 
+            size: 35
+          )
+        )
       ],
     );
   }

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tistos/domain/entities/video_post.dart';
-import 'package:tistos/presentation/widgets/shared/video_buttons.dart';
 import 'package:tistos/presentation/widgets/video/fullscreen_player.dart';
 
-class VideoScrollableView extends StatelessWidget {
+class VideoScrollableView extends StatefulWidget {
   
   final List<VideoPost> videos;
   
@@ -13,29 +12,30 @@ class VideoScrollableView extends StatelessWidget {
   });
 
   @override
+  State<VideoScrollableView> createState() => _VideoScrollableViewState();
+}
+
+class _VideoScrollableViewState extends State<VideoScrollableView> {
+  int _currentIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
     return PageView.builder(
       scrollDirection: Axis.vertical,
       physics: const BouncingScrollPhysics(),
-      itemCount: videos.length,
+      itemCount: widget.videos.length,
+      onPageChanged: (index) => setState(() => _currentIndex = index),
       itemBuilder: (context, index) {
-        final VideoPost videoPost = videos[index];
+        final VideoPost videoPost = widget.videos[index];
 
         return Stack(
           children: [
             // Video Player + gradiente
             SizedBox.expand(
               child: FullScreenPlayer(
-                caption: videoPost.caption,
-                videoUrl: videoPost.videoUrl,
+                videoPost: videoPost,
+                isActive: index == _currentIndex,
               )
-            ),
-
-            // Botones
-            Positioned(
-              bottom: 40,
-              right: 20,
-              child: VideoButtons(video: videoPost)
             ),
             
           ],
