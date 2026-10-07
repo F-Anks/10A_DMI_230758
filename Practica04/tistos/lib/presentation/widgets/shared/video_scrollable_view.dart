@@ -25,7 +25,7 @@ class _VideoScrollableViewState extends State<VideoScrollableView>
   int _currentIndex = 0;
 
   // Mantiene viva la sección al deslizar entre pestañas
-  // (conserva el video y la posición en la que se quedó el usuario)
+  // (conserva la posición en la que se quedó el usuario)
   @override
   bool get wantKeepAlive => true;
 
@@ -41,21 +41,22 @@ class _VideoScrollableViewState extends State<VideoScrollableView>
       itemBuilder: (context, index) {
         final VideoPost videoPost = widget.videos[index];
 
-        return Stack(
-          children: [
-            // Video Player + gradiente
-            SizedBox.expand(
-              child: FullScreenPlayer(
-                videoPost: videoPost,
-                // Solo se reproduce si la sección está visible
-                // y además es el video actual de la lista
-                isActive: widget.isActive && index == _currentIndex,
-              )
-            ),
-            
-          ],
-        );
+        // Solo la sección visible crea reproductores. Los teléfonos tienen un
+        // número limitado de decodificadores de video por hardware; si se
+        // agotan, el video se queda en negro y solo se escucha el audio.
+        if (!widget.isActive) {
+          return VideoPlaceholder(coverUrl: videoPost.coverUrl);
+        }
 
+        return SizedBox.expand(
+          child: FullScreenPlayer(
+            // Key única: evita que un reproductor viejo se reutilice
+            key: ValueKey('$index-${videoPost.videoUrl}'),
+            videoPost: videoPost,
+            // Solo se reproduce el video actual de la lista
+            isActive: index == _currentIndex,
+          ),
+        );
       },
     );
   }

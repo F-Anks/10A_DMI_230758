@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tistos/presentation/providers/discover_provider.dart';
+import 'package:tistos/presentation/models/feed_section.dart';
+import 'package:tistos/presentation/providers/feed_provider.dart';
 import 'package:tistos/presentation/screens/discover/discover_screen.dart';
 import 'package:tistos/presentation/screens/for_you/for_you_screen.dart';
 import 'package:tistos/presentation/screens/near_you/near_you_screen.dart';
+import 'package:tistos/presentation/widgets/glass/liquid_glass_tab_bar.dart';
+import 'package:tistos/presentation/widgets/shared/hourglass_loading.dart';
+import 'package:tistos/presentation/widgets/shared/animated_gradient_background.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,19 +33,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// Cambia de sección al tocar una pestaña
-  Future<void> _onTabTap(int index) async {
-    // Si selecciona la misma sección, no hace nada
-    if (index == _selectedTab) return;
+  void _onTabTap(int index) {
+    // Si selecciona la misma sección, refrescamos los videos
+    if (index == _selectedTab) {
+      context.read<FeedProvider>().refresh(FeedSection.values[index]);
+      return;
+    }
 
     setState(() => _selectedTab = index);
 
     _isAnimatingFromTap = true;
-    await _pageController.animateToPage(
+    _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 350),
       curve: Curves.easeOutCubic,
-    );
-    _isAnimatingFromTap = false;
+    ).then((_) {
+      _isAnimatingFromTap = false;
+    });
   }
 
   /// Se llama al deslizar con el dedo entre secciones
@@ -52,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<DiscoverProvider>();
+    final provider = context.watch<FeedProvider>();
 
     if (provider.initialLoading) {
       return const Scaffold(
@@ -68,35 +76,39 @@ class _HomeScreenState extends State<HomeScreen> {
             controller: _pageController,
             onPageChanged: _onPageChanged,
             children: [
-              ForYouScreen(isActive: _selectedTab == 0),
-              NearYouScreen(isActive: _selectedTab == 1),
-              DiscoverScreen(isActive: _selectedTab == 2),
+              // Mientras una sección se refresca, su video se pausa
+              ForYouScreen(
+                isActive: _selectedTab == 0 && !provider.feed(FeedSection.forYou).isRefreshing,
+              ),
+              NearYouScreen(
+                isActive: _selectedTab == 1 && !provider.feed(FeedSection.nearYou).isRefreshing,
+              ),
+              DiscoverScreen(
+                isActive: _selectedTab == 2 && !provider.feed(FeedSection.discover).isRefreshing,
+              ),
             ],
           ),
 
-          // Barra de navegación superior
+          // Indicador de recarga de la sección actual
+          if (provider.feed(FeedSection.values[_selectedTab]).isRefreshing)
+            const AnimatedGradientBackground(
+              child: Center(
+                child: HourglassLoading(),
+              ),
+            ),
+
+          // Barra de navegación superior líquida
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _TabButton(
-                    title: 'For you',
-                    isSelected: _selectedTab == 0,
-                    onTap: () => _onTabTap(0),
-                  ),
-                  _TabButton(
-                    title: 'Near you',
-                    isSelected: _selectedTab == 1,
-                    onTap: () => _onTabTap(1),
-                  ),
-                  _TabButton(
-                    title: 'Discover',
-                    isSelected: _selectedTab == 2,
-                    onTap: () => _onTabTap(2),
-                  ),
-                ],
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: LiquidGlassTabBar(
+                  labels: FeedSection.values.map((s) => s.label).toList(),
+                  controller: _pageController,
+                  selectedIndex: _selectedTab,
+                  onTap: _onTabTap,
+                ),
               ),
             ),
           ),
@@ -106,58 +118,3 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _TabButton extends StatelessWidget {
-  final String title;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _TabButton({
-    required this.title,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        color: Colors.transparent, // Asegura que toda el área sea táctil
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 200),
-              style: TextStyle(
-                color: isSelected ? Colors.white : Colors.white54,
-                fontSize: isSelected ? 18 : 16,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                shadows: const [
-                  Shadow(
-                    color: Colors.black54,
-                    blurRadius: 4,
-                    offset: Offset(0, 1),
-                  )
-                ],
-              ),
-              child: Text(title),
-            ),
-            const SizedBox(height: 4),
-            // Indicador de la sección seleccionada
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeOut,
-              height: 3,
-              width: isSelected ? 24 : 0,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

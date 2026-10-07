@@ -1,12 +1,7 @@
 import 'package:tistos/domain/entities/video_post.dart';
 
-
-
 abstract class VideoPostRepository {
-
-  Future<List<VideoPost>> getFavoriteVideosByUser( String userID );
-
-  Future<List<VideoPost>> getTrendingVideosByPage( int page );
-
-
+  Future<List<VideoPost>> getTikTokVideos();
+  Future<List<VideoPost>> getYouTubeShorts();
+  Future<List<VideoPost>> getInstagramReels();
 }

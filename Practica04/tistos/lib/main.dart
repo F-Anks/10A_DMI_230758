@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:tistos/config/theme/app_theme.dart';
-import 'package:tistos/presentation/providers/discover_provider.dart';
+import 'package:tistos/presentation/providers/feed_provider.dart';
+import 'package:tistos/presentation/providers/playback_settings.dart';
 import 'package:tistos/presentation/screens/splash/splash_screen.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  await dotenv.load(fileName: ".env");
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -15,7 +20,10 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider( 
           lazy: false,
-          create: (_) => DiscoverProvider()..loadNextPage() 
+          create: (_) => FeedProvider()..loadAll() 
+        ),
+        ChangeNotifierProvider(
+          create: (_) => PlaybackSettings(),
         ),
       ],
       child: MaterialApp(
