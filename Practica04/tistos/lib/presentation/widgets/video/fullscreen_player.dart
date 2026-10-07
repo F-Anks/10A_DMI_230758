@@ -3,7 +3,6 @@ import 'package:video_player/video_player.dart';
 import 'package:tistos/domain/entities/video_post.dart';
 import 'package:tistos/presentation/widgets/shared/video_buttons.dart';
 import 'package:tistos/presentation/widgets/video/video_background.dart';
-import 'package:video_player/video_player.dart';
 
 class FullScreenPlayer extends StatefulWidget {
   final VideoPost videoPost;
@@ -29,11 +28,13 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
     super.initState();
 
     controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoPost.videoUrl));
-    _initializeFuture = controller.initialize().then((_) {
-      controller.setVolume(isMuted ? 0 : 1);
-      controller.setLooping(true);
+    _initializeFuture = controller.initialize().then((_) async {
+      await controller.setVolume(isMuted ? 0 : 1);
+      await controller.setLooping(true);
+      // Se revisa widget.isActive al terminar de cargar, por si la sección
+      // cambió mientras el video se estaba descargando
       if (widget.isActive) {
-        controller.play();
+        await controller.play();
       }
     });
   }
@@ -51,11 +52,11 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
     // Pause the video if it goes off-screen, play it if it comes on-screen
     if (oldWidget.isActive != widget.isActive &&
         controller.value.isInitialized) {
-      if (widget.isActive) {
-        controller.play();
-      } else {
-        controller.pause();
-      }
+      final action = widget.isActive ? controller.play() : controller.pause();
+      // Redibuja cuando termine para actualizar el icono de pausa
+      action.then((_) {
+        if (mounted) setState(() {});
+      });
     }
   }
 
@@ -98,7 +99,7 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
                     child: Icon(
                       Icons.play_arrow,
                       size: 80,
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withAlpha(128),
                     ),
                   ),
 
@@ -131,7 +132,7 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
 class _VideoCaption extends StatelessWidget {
   final String caption;
 
-  const _VideoCaption({super.key, required this.caption});
+  const _VideoCaption({required this.caption});
 
   @override
   Widget build(BuildContext context) {

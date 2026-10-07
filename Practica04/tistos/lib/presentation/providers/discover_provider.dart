@@ -11,18 +11,20 @@ class DiscoverProvider extends ChangeNotifier {
   // TODO: Repository, DataSource
 
   bool initialLoading = true;
-  List<VideoPost> videos = [];
-
+  List<VideoPost> forYouVideos = [];
+  List<VideoPost> nearYouVideos = [];
+  List<VideoPost> discoverVideos = [];
 
   Future<void> loadNextPage() async {
-
-    // await Future.delayed( const Duration(seconds: 2) );
-
-    final List<VideoPost> newVideos = videoPosts.map( 
+    final List<VideoPost> allVideos = videoPosts.map( 
       ( video ) => LocalVideoModel.fromJson(video).toVideoPostEntity()
     ).toList();
     
-    videos.addAll( newVideos );
+    // Dividiendo en 3, 3 y 2
+    forYouVideos = allVideos.sublist(0, 3);
+    nearYouVideos = allVideos.sublist(3, 6);
+    discoverVideos = allVideos.sublist(6, 8);
+
     initialLoading = false;
     notifyListeners();
   }

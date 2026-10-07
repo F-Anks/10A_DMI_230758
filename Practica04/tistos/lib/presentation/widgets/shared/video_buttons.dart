@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:tistos/config/helpers/human_formats.dart';
 import 'package:tistos/domain/entities/video_post.dart';
