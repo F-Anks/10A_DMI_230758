@@ -2,7 +2,8 @@
 enum FeedSection {
   forYou('For you'),
   nearYou('Near you'),
-  discover('Discover');
+  discover('Discover'),
+  favorites('Favorites');
 
   const FeedSection(this.label);
 

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tistos/config/helpers/human_formats.dart';
 import 'package:tistos/domain/entities/video_post.dart';
 import 'package:tistos/presentation/widgets/glass/liquid_glass_button.dart';
+import 'package:tistos/infrastructure/services/local_storage_service.dart';
 
-class VideoButtons extends StatelessWidget {
+class VideoButtons extends StatefulWidget {
 
   final VideoPost video;
   final bool isMuted;
@@ -17,18 +18,43 @@ class VideoButtons extends StatelessWidget {
   });
 
   @override
+  State<VideoButtons> createState() => _VideoButtonsState();
+}
+
+class _VideoButtonsState extends State<VideoButtons> {
+
+  void _toggleLike() {
+    setState(() {
+      widget.video.isLiked = !widget.video.isLiked;
+      if (widget.video.isLiked) {
+        widget.video.likes++;
+      } else {
+        widget.video.likes--;
+      }
+    });
+    LocalStorageService.saveVideoData(widget.video);
+    LocalStorageService.toggleFavorite(widget.video.id, widget.video.isLiked);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         _CustomGlassButton(
-          value: video.likes, 
-          iconData: Icons.favorite, 
-          iconColor: Colors.red,
-          tint: Colors.red.withValues(alpha: 0.5),
+          value: widget.video.likes, 
+          iconData: widget.video.isLiked ? Icons.favorite : Icons.favorite_border, 
+          iconColor: widget.video.isLiked ? Colors.red : Colors.white,
+          tint: widget.video.isLiked ? Colors.red.withValues(alpha: 0.5) : null,
+          onTap: _toggleLike,
         ),
         const SizedBox( height: 20 ),
         _CustomGlassButton(
-          value: video.views, 
+          value: widget.video.comments, 
+          iconData: Icons.chat_bubble_outline,
+        ),
+        const SizedBox( height: 20 ),
+        _CustomGlassButton(
+          value: widget.video.views, 
           iconData: Icons.remove_red_eye_outlined,
         ),
 
@@ -38,10 +64,10 @@ class VideoButtons extends StatelessWidget {
         Column(
           children: [
             LiquidGlassButton(
-              onTap: onToggleMute,
+              onTap: widget.onToggleMute,
               size: 52,
               child: Icon(
-                isMuted ? Icons.volume_off : Icons.volume_up, 
+                widget.isMuted ? Icons.volume_off : Icons.volume_up, 
                 color: Colors.white, 
                 size: 26,
               ),
@@ -61,11 +87,13 @@ class _CustomGlassButton extends StatelessWidget {
   final IconData iconData;
   final Color? color;
   final Color? tint;
+  final VoidCallback? onTap;
 
   const _CustomGlassButton({
     required this.value, 
     required this.iconData, 
     this.tint,
+    this.onTap,
     iconColor
   }): color = iconColor ?? Colors.white;
 
@@ -74,7 +102,7 @@ class _CustomGlassButton extends StatelessWidget {
     return Column(
       children: [
         LiquidGlassButton(
-          onTap: () {}, 
+          onTap: onTap ?? () {}, 
           size: 52,
           tint: tint,
           child: Icon(iconData, color: color, size: 26),

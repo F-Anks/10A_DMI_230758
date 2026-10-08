@@ -19,6 +19,7 @@ class DiscoverScreen extends StatelessWidget {
       key: ValueKey('discover_${feedState.version}'),
       videos: feedState.videos,
       isActive: isActive,
+      onRefresh: () => context.read<FeedProvider>().refresh(FeedSection.discover),
     );
   }
 }

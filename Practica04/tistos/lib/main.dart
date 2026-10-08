@@ -6,7 +6,11 @@ import 'package:tistos/presentation/providers/feed_provider.dart';
 import 'package:tistos/presentation/providers/playback_settings.dart';
 import 'package:tistos/presentation/screens/splash/splash_screen.dart';
 
+import 'package:tistos/infrastructure/services/local_storage_service.dart';
+
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalStorageService.init();
   await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }

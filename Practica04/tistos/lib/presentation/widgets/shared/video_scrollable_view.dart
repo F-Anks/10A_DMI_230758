@@ -3,17 +3,18 @@ import 'package:tistos/domain/entities/video_post.dart';
 import 'package:tistos/presentation/widgets/video/fullscreen_player.dart';
 
 class VideoScrollableView extends StatefulWidget {
-  
   final List<VideoPost> videos;
 
   /// Indica si la sección que contiene esta lista está visible.
   /// Si es false, ningún video de la lista se reproduce.
   final bool isActive;
-  
+  final Future<void> Function()? onRefresh;
+
   const VideoScrollableView({
-    super.key, 
+    super.key,
     required this.videos,
     this.isActive = true,
+    this.onRefresh,
   });
 
   @override
@@ -33,7 +34,7 @@ class _VideoScrollableViewState extends State<VideoScrollableView>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return PageView.builder(
+    Widget pageView = PageView.builder(
       scrollDirection: Axis.vertical,
       physics: const BouncingScrollPhysics(),
       itemCount: widget.videos.length,
@@ -41,23 +42,30 @@ class _VideoScrollableViewState extends State<VideoScrollableView>
       itemBuilder: (context, index) {
         final VideoPost videoPost = widget.videos[index];
 
-        // Solo la sección visible crea reproductores. Los teléfonos tienen un
-        // número limitado de decodificadores de video por hardware; si se
-        // agotan, el video se queda en negro y solo se escucha el audio.
         if (!widget.isActive) {
           return VideoPlaceholder(coverUrl: videoPost.coverUrl);
         }
 
         return SizedBox.expand(
           child: FullScreenPlayer(
-            // Key única: evita que un reproductor viejo se reutilice
             key: ValueKey('$index-${videoPost.videoUrl}'),
             videoPost: videoPost,
-            // Solo se reproduce el video actual de la lista
             isActive: index == _currentIndex,
           ),
         );
       },
     );
+
+    if (widget.onRefresh != null) {
+      return RefreshIndicator(
+        onRefresh: widget.onRefresh!,
+        strokeWidth: 3,
+        color: Colors.white,
+        backgroundColor: Colors.black87,
+        child: pageView,
+      );
+    }
+    
+    return pageView;
   }
 }

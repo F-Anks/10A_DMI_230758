@@ -19,6 +19,7 @@ class NearYouScreen extends StatelessWidget {
       key: ValueKey('near_you_${feedState.version}'),
       videos: feedState.videos,
       isActive: isActive,
+      onRefresh: () => context.read<FeedProvider>().refresh(FeedSection.nearYou),
     );
   }
 }

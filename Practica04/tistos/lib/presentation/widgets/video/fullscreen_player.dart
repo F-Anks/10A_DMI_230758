@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:tistos/domain/entities/video_post.dart';
@@ -6,6 +8,7 @@ import 'package:tistos/presentation/widgets/shared/video_buttons.dart';
 import 'package:tistos/presentation/widgets/video/video_background.dart';
 import 'package:tistos/presentation/widgets/glass/liquid_glass.dart';
 import 'package:tistos/presentation/providers/playback_settings.dart';
+import 'package:tistos/infrastructure/services/local_storage_service.dart';
 
 class FullScreenPlayer extends StatefulWidget {
   final VideoPost videoPost;
@@ -28,6 +31,10 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
   bool _isSpeed2x = false;
   bool _isSpeedLocked = false;
   bool _showSpeedHint = false;
+  bool _showNormalSpeedFeedback = false;
+  bool _viewCounted = false;
+  bool _isRotationLocked = false;
+  Timer? _hideOverlayTimer;
 
   @override
   void initState() {
@@ -36,24 +43,89 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
   }
 
   void _initController() {
+    final isYouTube = widget.videoPost.videoUrl.contains('googlevideo');
     controller = VideoPlayerController.networkUrl(
       Uri.parse(widget.videoPost.videoUrl),
-      httpHeaders: const {
-        'User-Agent':
-            'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Mobile Safari/537.36',
-      },
+      httpHeaders: isYouTube ? const {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      } : const {},
     );
     _initializeFuture = controller.initialize().then((_) async {
+      if (!mounted) return;
       final isMuted = context.read<PlaybackSettings>().isMuted;
       await controller.setVolume(isMuted ? 0 : 1);
       await controller.setLooping(true);
+      controller.addListener(_checkVideoProgress);
+      _updateOrientation();
       if (mounted && widget.isActive) {
         await controller.play();
       }
     });
   }
 
+  void _updateOrientation() {
+    if (!controller.value.isInitialized) return;
+    if (_isRotationLocked) return; // Mantiene el bloqueo temporal
+    
+    final isHorizontal = controller.value.aspectRatio > 1.0;
+    
+    if (widget.isActive && isHorizontal) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    } else {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
+    }
+  }
+
+  void _forceLandscape() {
+    setState(() => _isRotationLocked = true);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    // Bloquea el sensor por 5 segundos para que no rote accidentalmente
+    Future.delayed(const Duration(seconds: 5), () {
+      if (mounted) {
+        setState(() => _isRotationLocked = false);
+        if (widget.isActive) _updateOrientation();
+      }
+    });
+  }
+
+  void _forcePortrait() {
+    setState(() => _isRotationLocked = true);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+    // Bloquea el sensor por 5 segundos al regresar a vertical
+    Future.delayed(const Duration(seconds: 5), () {
+      if (mounted) {
+        setState(() => _isRotationLocked = false);
+        if (widget.isActive) _updateOrientation();
+      }
+    });
+  }
+
+  void _checkVideoProgress() {
+    if (_viewCounted || !controller.value.isPlaying) return;
+    if (controller.value.position >= const Duration(seconds: 3)) {
+      _viewCounted = true;
+      if (mounted) {
+        setState(() {
+          widget.videoPost.views++;
+        });
+        LocalStorageService.saveVideoData(widget.videoPost);
+      }
+    }
+  }
+
   void _retry() {
+    controller.removeListener(_checkVideoProgress);
     controller.dispose();
     setState(_initController);
   }
@@ -69,28 +141,40 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
       });
       // Reset speed if we switch tabs
       if (!widget.isActive) {
+        _hideOverlayTimer?.cancel();
         _isSpeedLocked = false;
         _isSpeed2x = false;
         _showSpeedHint = false;
+        _showNormalSpeedFeedback = false;
         controller.setPlaybackSpeed(1.0);
       }
+      _updateOrientation();
     }
   }
 
   @override
   void dispose() {
+    _hideOverlayTimer?.cancel();
+    if (widget.isActive) {
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    }
     controller.dispose();
     super.dispose();
   }
 
   void _handleTap() {
-    // Si estaba bloqueada en 2x, un tap simple la desbloquea y vuelve a 1x
+    // Si estaba bloqueada en 2x, un tap simple la desbloquea y vuelve a 1x con feedback visual
     if (_isSpeedLocked) {
+      _hideOverlayTimer?.cancel();
       setState(() {
         _isSpeedLocked = false;
         _isSpeed2x = false;
         _showSpeedHint = false;
+        _showNormalSpeedFeedback = true;
         controller.setPlaybackSpeed(1.0);
+      });
+      _hideOverlayTimer = Timer(const Duration(seconds: 1), () {
+        if (mounted) setState(() => _showNormalSpeedFeedback = false);
       });
       return;
     }
@@ -106,15 +190,31 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
   void _handleLongPressStart(LongPressStartDetails details) {
     if (!controller.value.isPlaying || !controller.value.isInitialized) return;
     
-    // Solo activamos 2x si toca del lado derecho (mitad de pantalla en adelante)
     final screenWidth = MediaQuery.of(context).size.width;
     if (details.globalPosition.dx > screenWidth * 0.3) {
-      setState(() {
-        _isSpeed2x = true;
-        _showSpeedHint = true;
-        _isSpeedLocked = false;
-        controller.setPlaybackSpeed(2.0);
-      });
+      _hideOverlayTimer?.cancel();
+      
+      // Si ya estaba a 2x bloqueado y mantiene presionado, regresarlo a 1x
+      if (_isSpeedLocked) {
+        setState(() {
+          _isSpeedLocked = false;
+          _isSpeed2x = false;
+          _showSpeedHint = false;
+          _showNormalSpeedFeedback = true;
+          controller.setPlaybackSpeed(1.0);
+        });
+        _hideOverlayTimer = Timer(const Duration(seconds: 1), () {
+          if (mounted) setState(() => _showNormalSpeedFeedback = false);
+        });
+      } else {
+        setState(() {
+          _isSpeed2x = true;
+          _showSpeedHint = true;
+          _isSpeedLocked = false;
+          _showNormalSpeedFeedback = false;
+          controller.setPlaybackSpeed(2.0);
+        });
+      }
     }
   }
 
@@ -133,6 +233,14 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
       setState(() {
         _showSpeedHint = false;
       });
+      _hideOverlayTimer?.cancel();
+      _hideOverlayTimer = Timer(const Duration(seconds: 1), () {
+        if (mounted && _isSpeedLocked) {
+          setState(() {
+            _isSpeed2x = false; // Oculta el widget visual de la velocidad
+          });
+        }
+      });
     } else {
       setState(() {
         _isSpeed2x = false;
@@ -145,8 +253,9 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
   @override
   Widget build(BuildContext context) {
     final playbackSettings = context.watch<PlaybackSettings>();
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     
-    if (_initializeFuture != null && controller.value.isInitialized) {
+    if (controller.value.isInitialized) {
       controller.setVolume(playbackSettings.isMuted ? 0 : 1);
     }
 
@@ -199,10 +308,28 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
                   ),
                 ),
 
-                // Gradiente
-                IgnorePointer(
-                  child: VideoBackground(stops: const [0.8, 1.0]),
-                ),
+                if (!isLandscape) ...[
+                  // Gradiente
+                  IgnorePointer(
+                    child: VideoBackground(stops: const [0.8, 1.0]),
+                  ),
+
+                  // Botón para modo horizontal si el video es ancho
+                  if (controller.value.aspectRatio > 1.0)
+                    Positioned(
+                      top: 100,
+                      right: 20,
+                      child: ElevatedButton.icon(
+                        onPressed: _forceLandscape,
+                        icon: const Icon(Icons.screen_rotation, size: 20),
+                        label: const Text("Girar"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black54,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                ],
 
                 // Icono de Play (se muestra cuando está pausado)
                 if (!controller.value.isPlaying)
@@ -234,8 +361,8 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
                     ),
                   ),
 
-                // Overlay de Velocidad 2x
-                if (_isSpeed2x)
+                // Overlay de Velocidad 2x y Velocidad Normal
+                if (_isSpeed2x || _showNormalSpeedFeedback)
                   IgnorePointer(
                     child: Positioned(
                       top: 100,
@@ -261,24 +388,28 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    _isSpeedLocked ? 'Velocidad 2x bloqueada' : 'Velocidad 2x',
+                                    _showNormalSpeedFeedback
+                                        ? 'Velocidad normal'
+                                        : (_isSpeedLocked ? 'Velocidad 2x bloqueada' : 'Velocidad 2x'),
                                     style: const TextStyle(
                                       color: Colors.white, 
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
                                     ),
                                   ),
-                                  if (!_isSpeedLocked && _showSpeedHint) ...[
-                                    const SizedBox(width: 8),
-                                    const Icon(Icons.swipe_down, color: Colors.white, size: 20),
-                                    const SizedBox(width: 4),
-                                    const Text(
-                                      'Desliza para bloquear',
-                                      style: TextStyle(color: Colors.white70, fontSize: 13),
-                                    ),
-                                  ] else if (_isSpeedLocked) ...[
-                                    const SizedBox(width: 12),
-                                    const Icon(Icons.lock, color: Colors.white, size: 20),
+                                  if (!_showNormalSpeedFeedback) ...[
+                                    if (!_isSpeedLocked && _showSpeedHint) ...[
+                                      const SizedBox(width: 8),
+                                      const Icon(Icons.swipe_down, color: Colors.white, size: 20),
+                                      const SizedBox(width: 4),
+                                      const Text(
+                                        'Desliza para bloquear',
+                                        style: TextStyle(color: Colors.white70, fontSize: 13),
+                                      ),
+                                    ] else if (_isSpeedLocked) ...[
+                                      const SizedBox(width: 12),
+                                      const Icon(Icons.lock, color: Colors.white, size: 20),
+                                    ],
                                   ],
                                 ],
                               ),
@@ -289,31 +420,59 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
                     ),
                   ),
 
-                // Botones interactivos y mute
-                Positioned(
-                  bottom: 60,
-                  right: 20,
-                  child: VideoButtons(
-                    video: widget.videoPost,
-                    isMuted: playbackSettings.isMuted,
-                    onToggleMute: playbackSettings.toggleMute,
+                if (!isLandscape) ...[
+                  // Botones interactivos y mute
+                  Positioned(
+                    bottom: 60,
+                    right: 20,
+                    child: VideoButtons(
+                      video: widget.videoPost,
+                      isMuted: playbackSettings.isMuted,
+                      onToggleMute: playbackSettings.toggleMute,
+                    ),
                   ),
-                ),
-                
-                // Texto
-                Positioned(
-                  bottom: 70,
-                  left: 20,
-                  child: _VideoCaption(caption: widget.videoPost.caption),
-                ),
+                  
+                  // Texto
+                  Positioned(
+                    bottom: 70,
+                    left: 20,
+                    child: _VideoCaption(videoPost: widget.videoPost),
+                  ),
 
-                // Barra de progreso interactiva (Scrubber)
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: _CustomVideoScrubber(controller: controller),
-                ),
+                  // Barra de progreso interactiva (Scrubber)
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: _CustomVideoScrubber(controller: controller),
+                  ),
+                ],
+
+                if (isLandscape) ...[
+                  Positioned(
+                    top: 20,
+                    left: 20,
+                    child: SafeArea(
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
+                        onPressed: _forcePortrait,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 20,
+                    right: 20,
+                    child: SafeArea(
+                      child: IconButton(
+                        icon: Icon(
+                          playbackSettings.isMuted ? Icons.volume_off : Icons.volume_up,
+                          color: Colors.white, size: 30
+                        ),
+                        onPressed: playbackSettings.toggleMute,
+                      ),
+                    ),
+                  ),
+                ]
               ],
             ),
           ),
@@ -352,27 +511,86 @@ class VideoPlaceholder extends StatelessWidget {
   }
 }
 
-class _VideoCaption extends StatelessWidget {
-  final String caption;
+class _VideoCaption extends StatefulWidget {
+  final VideoPost videoPost;
 
-  const _VideoCaption({required this.caption});
+  const _VideoCaption({required this.videoPost});
+
+  @override
+  State<_VideoCaption> createState() => _VideoCaptionState();
+}
+
+class _VideoCaptionState extends State<_VideoCaption> {
+  bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final titleStyle = Theme.of(context).textTheme.titleLarge;
+    
+    // Tipografía estilo Apple (San Francisco / Inter)
+    final style = const TextStyle(
+      fontSize: 14.5,
+      color: Colors.white,
+      fontWeight: FontWeight.w400,
+      letterSpacing: -0.2, // Tracking negativo sutil como en iOS
+      shadows: [
+        Shadow(color: Colors.black54, blurRadius: 4, offset: Offset(0, 1))
+      ],
+    );
+    final boldStyle = style.copyWith(fontWeight: FontWeight.w700, fontSize: 16);
 
-    return IgnorePointer(
-      child: SizedBox(
-        width: size.width * 0.6,
-        child: Text(
-          caption,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: titleStyle?.copyWith(shadows: [
-            const Shadow(color: Colors.black, blurRadius: 4, offset: Offset(0, 1))
-          ]),
-        ),
+    return SizedBox(
+      width: size.width * 0.7, // Toma un poco más de espacio horizontal
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(widget.videoPost.username, style: boldStyle),
+          const SizedBox(height: 6),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final span = TextSpan(text: widget.videoPost.caption, style: style);
+              final tp = TextPainter(
+                text: span,
+                maxLines: 2,
+                textDirection: TextDirection.ltr,
+              );
+              tp.layout(maxWidth: constraints.maxWidth);
+
+              if (tp.didExceedMaxLines) {
+                return GestureDetector(
+                  onTap: () => setState(() => _isExpanded = !_isExpanded),
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 200),
+                    alignment: Alignment.topCenter,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.videoPost.caption,
+                          maxLines: _isExpanded ? null : 2,
+                          overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                          style: style,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          _isExpanded ? 'Ocultar' : 'Ver más',
+                          style: style.copyWith(
+                            fontWeight: FontWeight.w600, 
+                            color: Colors.white70,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              } else {
+                return Text(widget.videoPost.caption, style: style);
+              }
+            },
+          ),
+        ],
       ),
     );
   }

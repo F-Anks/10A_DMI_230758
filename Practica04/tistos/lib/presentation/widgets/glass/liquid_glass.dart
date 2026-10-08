@@ -1,7 +1,6 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/physics.dart';
 
 /// Resorte compartido por todas las animaciones "líquidas" (rebote suave,
 /// como los controles de iOS 26).
