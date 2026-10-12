@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tistos/config/helpers/video_deduplicator.dart';
 import 'package:tistos/domain/entities/video_post.dart';
 import 'package:tistos/presentation/widgets/video/fullscreen_player.dart';
 
@@ -34,13 +35,16 @@ class _VideoScrollableViewState extends State<VideoScrollableView>
   Widget build(BuildContext context) {
     super.build(context);
 
+    // Salvaguarda final de UI: garantiza que la lista nunca tenga videos repetidos ni consecutivos idénticos
+    final uniqueVideos = VideoDeduplicator.deduplicate(widget.videos);
+
     Widget pageView = PageView.builder(
       scrollDirection: Axis.vertical,
       physics: const BouncingScrollPhysics(),
-      itemCount: widget.videos.length,
+      itemCount: uniqueVideos.length,
       onPageChanged: (index) => setState(() => _currentIndex = index),
       itemBuilder: (context, index) {
-        final VideoPost videoPost = widget.videos[index];
+        final VideoPost videoPost = uniqueVideos[index];
 
         if (!widget.isActive) {
           return VideoPlaceholder(coverUrl: videoPost.coverUrl);

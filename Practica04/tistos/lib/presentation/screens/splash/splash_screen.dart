@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tistos/config/helpers/dynamic_icon_helper.dart';
 import 'package:tistos/config/helpers/logo_helper.dart';
 import 'package:tistos/presentation/screens/home/home_screen.dart';
 
@@ -34,6 +35,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+    DynamicIconHelper.syncWithCurrentSeason();
 
     _bgController = AnimationController(
       vsync: this,

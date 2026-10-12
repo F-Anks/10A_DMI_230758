@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:tistos/config/helpers/video_deduplicator.dart';
 import 'package:tistos/domain/entities/video_post.dart';
 import 'package:tistos/domain/repositories/video_posts_repository.dart';
 import 'package:tistos/infrastructure/datasources/rapidapi_datasource_impl.dart';
@@ -28,16 +29,31 @@ class FeedProvider extends ChangeNotifier {
 
   FeedState feed(FeedSection section) => _feeds[section]!;
 
-  /// Carga inicial de las 3 secciones (secuencial para evitar rate limits de la API)
+  /// Carga inicial rápida: Carga 'For You' de inmediato para desbloquear la UI,
+  /// y carga las demás secciones en segundo plano para que nunca haya bucle infinito.
   Future<void> loadAll() async {
-    for (final section in FeedSection.values) {
-      final videos = await _fetch(section);
-      _feeds[section] = FeedState(videos: videos);
-      // Notificamos para que la UI vaya mostrando las que ya cargaron
+    try {
+      // 1. Cargamos primero For You (la pestaña activa) para que el usuario entre de inmediato
+      final forYouVideos = await _fetch(FeedSection.forYou);
+      _feeds[FeedSection.forYou] = FeedState(videos: forYouVideos);
+    } catch (e) {
+      debugPrint('FeedProvider: Error cargando For You inicial: $e');
+    } finally {
+      // Desbloquea la UI de HomeScreen al instante (termina initialLoading)
+      _initialLoading = false;
       notifyListeners();
     }
-    _initialLoading = false;
-    notifyListeners();
+
+    // 2. Cargamos las demás pestañas en segundo plano sin bloquear al usuario
+    for (final section in [FeedSection.nearYou, FeedSection.discover, FeedSection.favorites]) {
+      try {
+        final videos = await _fetch(section);
+        _feeds[section] = FeedState(videos: videos);
+        notifyListeners();
+      } catch (e) {
+        debugPrint('FeedProvider: Error cargando $section en segundo plano: $e');
+      }
+    }
   }
 
   /// Pide videos nuevos para una sección y la reinicia desde el primer video.
@@ -56,13 +72,17 @@ class FeedProvider extends ChangeNotifier {
   }
 
   Future<List<VideoPost>> _fetch(FeedSection section) async {
+    List<VideoPost> rawList;
     switch (section) {
       case FeedSection.forYou:
-        return _repository.getTikTokVideos();
+        rawList = await _repository.getTikTokVideos();
+        break;
       case FeedSection.nearYou:
-        return _repository.getInstagramReels();
+        rawList = await _repository.getInstagramReels();
+        break;
       case FeedSection.discover:
-        return _repository.getYouTubeShorts();
+        rawList = await _repository.getYouTubeShorts();
+        break;
       case FeedSection.favorites:
         final favIds = LocalStorageService.getFavorites();
         final List<VideoPost> favs = [];
@@ -72,8 +92,12 @@ class FeedProvider extends ChangeNotifier {
             favs.add(VideoPost.fromJson(data));
           }
         }
-        return favs;
+        rawList = favs;
+        break;
     }
+
+    // Validación y deduplicación estricta a nivel Provider
+    return VideoDeduplicator.deduplicate(rawList);
   }
 
   void _update(FeedSection section, FeedState state) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tistos/config/helpers/dynamic_icon_helper.dart';
 import 'package:tistos/presentation/models/feed_section.dart';
 import 'package:tistos/presentation/providers/feed_provider.dart';
 import 'package:tistos/presentation/screens/discover/discover_screen.dart';
@@ -10,6 +11,7 @@ import 'package:tistos/presentation/widgets/glass/liquid_glass_tab_bar.dart';
 import 'package:tistos/presentation/widgets/shared/hourglass_loading.dart';
 import 'package:tistos/presentation/widgets/shared/animated_gradient_background.dart';
 import 'package:tistos/presentation/widgets/shared/privacy_dialog.dart';
+import 'package:tistos/presentation/widgets/shared/seasonal_corner_overlay.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,7 +20,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   int _selectedTab = 0; // 0: For You, 1: Near You, 2: Discover, 3: Favorites
 
   // Controlador para deslizar horizontalmente entre secciones
@@ -31,11 +33,25 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     PrivacyDialog.show(context);
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Al reanudar la app tras cambiar la fecha en ajustes de Android,
+      // actualizamos el launcher icon y reconstruimos inmediatamente
+      DynamicIconHelper.syncWithCurrentSeason();
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _pageController.dispose();
     super.dispose();
   }
@@ -127,6 +143,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: HourglassLoading(),
               ),
             ),
+
+          // Detalles decorativos sutiles en las esquinas según la temporada
+          // (telarañas en Halloween, nieve en Navidad, corazones en San Valentín, confeti en Aniversario)
+          // Se quitan automáticamente en orientación horizontal
+          if (!isLandscape)
+            SeasonalCornerOverlay(),
 
           // Barra de navegación superior líquida
           if (!isLandscape)

@@ -33,5 +33,7 @@
 **/.vscode/
 **/*.iml
 
-# Excluir videos pesados que fallan en Github (por límite de 100MB)
-Practica04/tistos/assets/videos/*.mp4
+# Excluir videos pesados que fallan en Github (por límite de 100MB y cuota LFS)
+Practica04/tistos/assets/video/
+Practica04/tistos/assets/videos/
+*.mp4

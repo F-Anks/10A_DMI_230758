@@ -43,14 +43,16 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
   }
 
   void _initController() {
-    final isYouTube = widget.videoPost.videoUrl.contains('googlevideo');
     controller = VideoPlayerController.networkUrl(
       Uri.parse(widget.videoPost.videoUrl),
-      httpHeaders: isYouTube ? const {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      } : const {},
+      httpHeaders: const {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+      },
     );
-    _initializeFuture = controller.initialize().then((_) async {
+    _initializeFuture = controller.initialize().timeout(
+      const Duration(seconds: 10),
+      onTimeout: () => throw TimeoutException('Tiempo de espera agotado al conectar con el video'),
+    ).then((_) async {
       if (!mounted) return;
       final isMuted = context.read<PlaybackSettings>().isMuted;
       await controller.setVolume(isMuted ? 0 : 1);

@@ -14,7 +14,7 @@ class AnimatedGradientBackground extends StatefulWidget {
 
 class _AnimatedGradientBackgroundState extends State<AnimatedGradientBackground>
     with SingleTickerProviderStateMixin {
-  late final SeasonTheme _theme = LogoHelper.getCurrentSeasonTheme();
+  SeasonTheme get _theme => LogoHelper.getCurrentSeasonTheme();
   late final AnimationController _bgController;
 
   @override

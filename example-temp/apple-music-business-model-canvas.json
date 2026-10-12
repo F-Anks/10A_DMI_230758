@@ -1,0 +1,348 @@
+{
+    "schema_version":  1,
+    "diagram_type":  "architecture",
+    "meta":  {
+                 "title":  "Business Model Canvas - Apple Music",
+                 "subtitle":  "Interactive view of Apple Music\u0027s partner ecosystem, customer value, operating model, and monetization within the Apple ecosystem.",
+                 "quality_profile":  "showcase",
+                 "viewBox":  [
+                                 1380,
+                                 980
+                             ],
+                 "views":  [
+                               {
+                                   "id":  "value-chain",
+                                   "label":  "Value chain",
+                                   "focus":  [
+                                                 "partners",
+                                                 "activities",
+                                                 "resources",
+                                                 "value",
+                                                 "segments"
+                                             ],
+                                   "note":  "Trace licensed content and Apple ecosystem capabilities into the customer experience."
+                               },
+                               {
+                                   "id":  "revenue-flow",
+                                   "label":  "Revenue flow",
+                                   "focus":  [
+                                                 "segments",
+                                                 "channels",
+                                                 "relationships",
+                                                 "revenue",
+                                                 "costs"
+                                             ],
+                                   "note":  "Follow subscriptions and Apple One bundles from customers through monetization and royalties."
+                               },
+                               {
+                                   "id":  "growth-loop",
+                                   "label":  "Growth loop",
+                                   "focus":  [
+                                                 "segments",
+                                                 "relationships",
+                                                 "value",
+                                                 "activities",
+                                                 "resources"
+                                             ],
+                                   "note":  "Explore ecosystem integration, curation, conversion, and data-driven improvement."
+                               }
+                           ]
+             },
+    "components":  [
+                       {
+                           "id":  "partners",
+                           "type":  "external",
+                           "label":  "Key Partners",
+                           "pos":  [
+                                       28,
+                                       122
+                                   ],
+                           "size":  [
+                                        235,
+                                        585
+                                    ],
+                           "tag":  "Metric: 6 partner categories",
+                           "sublabel":  "Labels, streaming, cloud \u0026 devices"
+                       },
+                       {
+                           "id":  "activities",
+                           "type":  "backend",
+                           "label":  "Key Activities",
+                           "pos":  [
+                                       286,
+                                       122
+                                   ],
+                           "size":  [
+                                        240,
+                                        278
+                                    ],
+                           "tag":  "Metric: 5 core activities",
+                           "sublabel":  "Curate, integrate, develop \u0026 grow"
+                       },
+                       {
+                           "id":  "resources",
+                           "type":  "database",
+                           "label":  "Key Resources",
+                           "pos":  [
+                                       286,
+                                       429
+                                   ],
+                           "size":  [
+                                        240,
+                                        278
+                                    ],
+                           "tag":  "Metric: 100M+ tracks",
+                           "sublabel":  "Catalog, ecosystem, team \u0026 data"
+                       },
+                       {
+                           "id":  "value",
+                           "type":  "frontend",
+                           "label":  "Value Propositions",
+                           "pos":  [
+                                       550,
+                                       122
+                                   ],
+                           "size":  [
+                                        275,
+                                        585
+                                    ],
+                           "tag":  "Metric: 6 differentiated offers",
+                           "sublabel":  "Lossless, personal \u0026 seamless"
+                       },
+                       {
+                           "id":  "relationships",
+                           "type":  "security",
+                           "label":  "Customer Relationships",
+                           "pos":  [
+                                       849,
+                                       122
+                                   ],
+                           "size":  [
+                                        240,
+                                        278
+                                    ],
+                           "tag":  "Metric: retention + loyalty",
+                           "sublabel":  "Integrated, curated \u0026 supported"
+                       },
+                       {
+                           "id":  "channels",
+                           "type":  "messagebus",
+                           "label":  "Channels",
+                           "pos":  [
+                                       849,
+                                       429
+                                   ],
+                           "size":  [
+                                        240,
+                                        278
+                                    ],
+                           "tag":  "Metric: 5+ reach surfaces",
+                           "sublabel":  "iPhone, Mac, Web, HomePod \u0026 CarPlay"
+                       },
+                       {
+                           "id":  "segments",
+                           "type":  "external",
+                           "label":  "Customer Segments",
+                           "pos":  [
+                                       1113,
+                                       122
+                                   ],
+                           "size":  [
+                                        235,
+                                        585
+                                    ],
+                           "tag":  "Metric: 100M+ subscribers",
+                           "sublabel":  "Listeners, creators \u0026 enterprise"
+                       },
+                       {
+                           "id":  "costs",
+                           "type":  "cloud",
+                           "label":  "Cost Structure",
+                           "pos":  [
+                                       28,
+                                       759
+                                   ],
+                           "size":  [
+                                        635,
+                                        150
+                                    ],
+                           "tag":  "Metric: royalties = ~65% revenue",
+                           "sublabel":  "Royalties, R\u0026D, content \u0026 cloud"
+                       },
+                       {
+                           "id":  "revenue",
+                           "type":  "messagebus",
+                           "label":  "Revenue Streams",
+                           "pos":  [
+                                       713,
+                                       759
+                                   ],
+                           "size":  [
+                                        635,
+                                        150
+                                    ],
+                           "tag":  "Metric: subscription-first model",
+                           "sublabel":  "Subscriptions, bundles \u0026 licensing"
+                       }
+                   ],
+    "connections":  [
+                        {
+                            "id":  "partner-content",
+                            "from":  "partners",
+                            "to":  "activities",
+                            "label":  "licenses \u0026 content",
+                            "labelAt":  [
+                                            274,
+                                            102
+                                        ],
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "partner-resources",
+                            "from":  "partners",
+                            "to":  "resources",
+                            "label":  "technology \u0026 data",
+                            "labelAt":  [
+                                            274,
+                                            722
+                                        ],
+                            "variant":  "dashed"
+                        },
+                        {
+                            "id":  "activities-value",
+                            "from":  "activities",
+                            "to":  "value",
+                            "label":  "creates listening experience",
+                            "labelAt":  [
+                                            538,
+                                            102
+                                        ],
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "resources-value",
+                            "from":  "resources",
+                            "to":  "value",
+                            "label":  "powers personalization",
+                            "labelAt":  [
+                                            538,
+                                            722
+                                        ],
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "value-relationship",
+                            "from":  "value",
+                            "to":  "relationships",
+                            "label":  "engagement",
+                            "labelAt":  [
+                                            837,
+                                            102
+                                        ],
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "relationship-segments",
+                            "from":  "relationships",
+                            "to":  "segments",
+                            "label":  "retention \u0026 conversion",
+                            "labelAt":  [
+                                            1101,
+                                            102
+                                        ],
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "channels-segments",
+                            "from":  "channels",
+                            "to":  "segments",
+                            "label":  "distribution \u0026 acquisition",
+                            "labelAt":  [
+                                            1101,
+                                            722
+                                        ],
+                            "variant":  "emphasis"
+                        },
+                        {
+                            "id":  "segments-revenue",
+                            "from":  "segments",
+                            "to":  "revenue",
+                            "label":  "subscriptions \u0026 ad spend",
+                            "variant":  "emphasis",
+                            "fromSide":  "bottom",
+                            "toSide":  "top"
+                        },
+                        {
+                            "id":  "revenue-costs",
+                            "from":  "revenue",
+                            "to":  "costs",
+                            "label":  "funds royalties \u0026 operations",
+                            "labelAt":  [
+                                            688,
+                                            930
+                                        ],
+                            "variant":  "emphasis",
+                            "fromSide":  "left",
+                            "toSide":  "right"
+                        },
+                        {
+                            "id":  "costs-partners",
+                            "from":  "costs",
+                            "to":  "partners",
+                            "label":  "royalty payments",
+                            "variant":  "dashed",
+                            "fromSide":  "top",
+                            "toSide":  "bottom"
+                        }
+                    ],
+    "cards":  [
+                  {
+                      "title":  "Key Partners",
+                      "dot":  "rose",
+                      "items":  [
+                                    "Universal Music, Sony Music, Warner Music; fabricantes de dispositivos; creadores de podcasts.",
+                                    "Relaciones de licenciamiento y distribuciÃ³n en el ecosistema Apple."
+                                ]
+                  },
+                  {
+                      "title":  "Activities \u0026 Resources",
+                      "dot":  "rose",
+                      "items":  [
+                                    "Desarrollo de ecosistema; licenciamiento; curadurÃ­a experta con Apple Music 1; integraciÃ³n de hardware.",
+                                    "CatÃ¡logo de 100M+ canciones Lossless; ecosistema con 2B+ dispositivos; infraestructura cloud Apple."
+                                ]
+                  },
+                  {
+                      "title":  "Customer Value",
+                      "dot":  "rose",
+                      "items":  [
+                                    "Lossless y Spatial Audio con Dolby Atmos sin costo extra; cero anuncios.",
+                                    "Handoff entre dispositivos; Apple Music Sing y letras para cantar."
+                                ]
+                  },
+                  {
+                      "title":  "Engagement \u0026 Reach",
+                      "dot":  "rose",
+                      "items":  [
+                                    "Lock-in del ecosistema; privacidad; curadurÃ­a humana; Apple Music Replay.",
+                                    "iOS, iPadOS, macOS, watchOS, HomePod, CarPlay, Web Player y Android."
+                                ]
+                  },
+                  {
+                      "title":  "Customers \u0026 Monetization",
+                      "dot":  "rose",
+                      "items":  [
+                                    "Usuarios Apple, audiÃ³filos, familias, estudiantes y suscriptores Apple One.",
+                                    "Individual $10.99; Family $16.99; bundles Apple One. Sin tier gratuito ni publicidad."
+                                ]
+                  },
+                  {
+                      "title":  "Reading the flows",
+                      "dot":  "emerald",
+                      "items":  [
+                                    "Solid arrows show primary value or revenue movement.",
+                                    "Dashed arrows show enabling dependencies and cost outflows."
+                                ]
+                  }
+              ]
+}

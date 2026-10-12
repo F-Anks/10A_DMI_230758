@@ -1,0 +1,364 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Tistos · Arquitectura y Flujo de las 3 APIs",
+    "output": "tistos-apis-architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "sequential-api-fetching",
+        "label": "Sequential API Fetching",
+        "focus": [
+          "sequential_fetch",
+          "datasource_impl",
+          "api_tikwm",
+          "api_pixabay",
+          "api_scraper"
+        ],
+        "note": "Despacho secuencial anti-rate-limit desde FeedProvider hacia las tres APIs externas."
+      },
+      {
+        "id": "deduplication-local-storage",
+        "label": "Deduplication & Local Storage",
+        "focus": [
+          "datasource_impl",
+          "models_mapper",
+          "local_storage",
+          "entity_layer"
+        ],
+        "note": "Filtrado contra IDs vistos en SharedPreferences e inyección de estadísticas."
+      },
+      {
+        "id": "entity-mapping-ui-feed",
+        "label": "Entity Mapping to UI Feed",
+        "focus": [
+          "entity_layer",
+          "feed_provider",
+          "ui_player"
+        ],
+        "note": "Distribución por pestañas hacia el reproductor Fullscreen con soporte landscape."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "sequential_fetch",
+      "type": "backend",
+      "label": "Sequential Dispatcher",
+      "sublabel": "FeedProvider.loadAll(); Anti-Rate-Limit",
+      "pos": [
+        50,
+        80
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "api_tikwm",
+      "type": "external",
+      "label": "TikWM API (For You)",
+      "sublabel": "feed/list; region=US; count=15",
+      "pos": [
+        50,
+        240
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "api_pixabay",
+      "type": "external",
+      "label": "Pixabay API (Discover)",
+      "sublabel": "sports; tiny MP4 640x360",
+      "pos": [
+        50,
+        390
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "api_scraper",
+      "type": "external",
+      "label": "Social Scraper Pro (Near You)",
+      "sublabel": "regional_feed; region=MX",
+      "pos": [
+        50,
+        540
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "datasource_impl",
+      "type": "backend",
+      "label": "RapidApiDatasource",
+      "sublabel": "Dio; 10s connect / 15s receive",
+      "pos": [
+        370,
+        240
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "models_mapper",
+      "type": "backend",
+      "label": "Data Models & Mappers",
+      "sublabel": "RapidApiVideoModel; PixabayVideoModel",
+      "pos": [
+        370,
+        390
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "local_storage",
+      "type": "database",
+      "label": "LocalStorageService",
+      "sublabel": "SharedPreferences; seen_video_ids",
+      "pos": [
+        370,
+        540
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "entity_layer",
+      "type": "backend",
+      "label": "VideoPost Entity",
+      "sublabel": "id; caption; videoUrl; likes; views",
+      "pos": [
+        680,
+        390
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "feed_provider",
+      "type": "frontend",
+      "label": "FeedProvider",
+      "sublabel": "forYou; nearYou; discover; favorites",
+      "pos": [
+        680,
+        240
+      ],
+      "size": [
+        230,
+        80
+      ]
+    },
+    {
+      "id": "ui_player",
+      "type": "frontend",
+      "label": "FullscreenPlayer UI",
+      "sublabel": "PageView; 5s rotation lock; 2x speed",
+      "pos": [
+        980,
+        315
+      ],
+      "size": [
+        230,
+        80
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Orquestador de Entrada",
+      "wraps": [
+        "sequential_fetch"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "Servicios Externos (3 APIs de Video)",
+      "wraps": [
+        "api_tikwm",
+        "api_pixabay",
+        "api_scraper"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "Infraestructura y Persistencia",
+      "wraps": [
+        "datasource_impl",
+        "models_mapper",
+        "local_storage"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "Dominio y Presentación UI",
+      "wraps": [
+        "entity_layer",
+        "feed_provider",
+        "ui_player"
+      ],
+      "pad": 16
+    }
+  ],
+  "connections": [
+    {
+      "id": "c1",
+      "from": "sequential_fetch",
+      "to": "datasource_impl",
+      "label": "carga secuencial",
+      "fromSide": "right",
+      "toSide": "top",
+      "labelDy": -20
+    },
+    {
+      "id": "c2",
+      "from": "datasource_impl",
+      "to": "api_tikwm",
+      "label": "GET US Feed",
+      "fromSide": "left",
+      "toSide": "right",
+      "labelDy": -20
+    },
+    {
+      "id": "c3",
+      "from": "datasource_impl",
+      "to": "api_pixabay",
+      "label": "GET Sports",
+      "fromSide": "left",
+      "toSide": "right",
+      "labelDy": -20,
+      "labelAt": [
+        290,
+        335
+      ]
+    },
+    {
+      "id": "c4",
+      "from": "datasource_impl",
+      "to": "api_scraper",
+      "label": "GET MX Feed",
+      "fromSide": "left",
+      "toSide": "right",
+      "labelDy": -20,
+      "labelAt": [
+        290,
+        484
+      ]
+    },
+    {
+      "id": "c5",
+      "from": "datasource_impl",
+      "to": "models_mapper",
+      "label": "JSON crudo",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 44
+    },
+    {
+      "id": "c6",
+      "from": "models_mapper",
+      "to": "local_storage",
+      "label": "filtra vistos",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 44
+    },
+    {
+      "id": "c7",
+      "from": "models_mapper",
+      "to": "entity_layer",
+      "label": "toVideoPostEntity()",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": 84
+    },
+    {
+      "id": "c8",
+      "from": "local_storage",
+      "to": "entity_layer",
+      "label": "stats / 0 views",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "labelDy": -20
+    },
+    {
+      "id": "c9",
+      "from": "entity_layer",
+      "to": "feed_provider",
+      "label": "listas por tab",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelDy": -20
+    },
+    {
+      "id": "c10",
+      "from": "feed_provider",
+      "to": "ui_player",
+      "label": "reproduce video",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": 110,
+      "labelAt": [
+        945,
+        484
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "API 1: TikWM Feed (For You)",
+      "items": [
+        "Peticiones públicas en EEUU (region=US, count=15)",
+        "Videos virales globales con alta disponibilidad"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "API 2: Pixabay Videos (Discover)",
+      "items": [
+        "Contenido deportivo alternativo mediante búsqueda q=vertical sports",
+        "Streams tiny MP4 (640x360): mínimo consumo de RAM y decodificación fluida en hardware móvil"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "API 3: Social Scraper Pro (Near You)",
+      "items": [
+        "Cobertura regional MX mediante endpoint regional_feed",
+        "Fallback geo-localizado de alta disponibilidad con proxy route simulado"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Deduplicación & Reglas de Estado",
+      "items": [
+        "SharedPreferences registra seen_video_ids para priorizar videos frescos y descartar repeticiones",
+        "Primer video inicia estrictamente con 0 vistas y 0 likes; restaura contadores en videos recurrentes"
+      ]
+    }
+  ]
+}
