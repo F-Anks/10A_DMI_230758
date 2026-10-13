@@ -23,7 +23,7 @@
 
 ---
 
-## 📋 Descripción de la Práctica
+##  Descripción de la Práctica
 
 En esta práctica se llevó a cabo el procedimiento formal de **compilación, publicación en la nube y evaluación funcional y responsiva** de la aplicación móvil **TisTos** utilizando la plataforma de virtualización [Appetize.io](https://appetize.io/). 
 
@@ -31,26 +31,26 @@ A través de Appetize, el ejecutable empaquetado en modo de producción (*Releas
 
 ---
 
-## 🎯 Objetivo de la Práctica
+##  Objetivo de la Práctica
 
 Implementar el proceso de distribución y evaluación de la aplicación móvil **TisTos** desarrollada en **Flutter** mediante la plataforma **Appetize.io**, comprobando su funcionamiento en dispositivos Android virtuales, generando los enlaces públicos de acceso para demostración docente y documentando las evidencias técnicas, métricas de compilación, casos de prueba y análisis de adaptabilidad en el repositorio de GitHub.
 
 ---
 
-## 🌐 Enlaces Oficiales de Acceso en Appetize.io
+##  Enlaces Oficiales de Acceso en Appetize.io
 
-* 📱 **Enlace Principal de la Aplicación en Appetize:**  
-  👉 **[https://appetize.io/app/b_o3aughhl5pz2mzfgg7nkygbzyy](https://appetize.io/app/b_o3aughhl5pz2mzfgg7nkygbzyy)**
+*  **Enlace Principal de la Aplicación en Appetize:**  
+   **[https://appetize.io/app/b_o3aughhl5pz2mzfgg7nkygbzyy](https://appetize.io/app/b_o3aughhl5pz2mzfgg7nkygbzyy)**
 
-* 📲 **Acceso Directo — Simulador Google Pixel 7 (Android 13.0):**  
-  👉 **[https://appetize.io/app/android/com.example.tistosv2?device=pixel7&osVersion=13.0&toolbar=true](https://appetize.io/app/android/com.example.tistosv2?device=pixel7&osVersion=13.0&toolbar=true)**
+*  **Acceso Directo — Simulador Google Pixel 7 (Android 13.0):**  
+   **[https://appetize.io/app/android/com.example.tistosv2?device=pixel7&osVersion=13.0&toolbar=true](https://appetize.io/app/android/com.example.tistosv2?device=pixel7&osVersion=13.0&toolbar=true)**
 
-* 📟 **Acceso Directo — Simulador Pixel Tablet (Android 13.0):**  
-  👉 **[https://appetize.io/app/android/com.example.tistosv2?device=pixeltablet&osVersion=13.0&toolbar=true](https://appetize.io/app/android/com.example.tistosv2?device=pixeltablet&osVersion=13.0&toolbar=true)**
+*  **Acceso Directo — Simulador Pixel Tablet (Android 13.0):**  
+   **[https://appetize.io/app/android/com.example.tistosv2?device=pixeltablet&osVersion=13.0&toolbar=true](https://appetize.io/app/android/com.example.tistosv2?device=pixeltablet&osVersion=13.0&toolbar=true)**
 
 ---
 
-## 📦 Ficha Técnica del Binario Compilado (APK Release)
+##  Ficha Técnica del Binario Compilado (APK Release)
 
 El archivo ejecutable fue compilado con las optimizaciones completas de producción del SDK de Flutter mediante el comando:
 
@@ -74,7 +74,7 @@ flutter build apk --release
 
 ---
 
-## 📸 Evidencias Técnicas de Despliegue y Ejecución en Appetize.io
+##  Evidencias Técnicas de Despliegue y Ejecución en Appetize.io
 
 A continuación se presentan las capturas reales obtenidas durante la sesión de validación de la aplicación en la plataforma Appetize.io, cubriendo el panel de administración, el teléfono inteligente de referencia y la tableta de gran formato:
 
@@ -155,7 +155,7 @@ A continuación se presentan las capturas reales obtenidas durante la sesión de
 
 ---
 
-## 🧪 Matriz de Validación y Casos de Prueba Ejecutados
+##  Matriz de Validación y Casos de Prueba Ejecutados
 
 | ID | Módulo Evaluado | Procedimiento de Prueba | Dispositivo Virtual | Resultado Obtenido | Estatus |
 | :---: | :--- | :--- | :---: | :--- | :---: |
@@ -169,7 +169,7 @@ A continuación se presentan las capturas reales obtenidas durante la sesión de
 
 ---
 
-## 🛠️ Bitácora de Análisis Técnico e Incidencias
+##  Bitácora de Análisis Técnico e Incidencias
 
 ### 1. Ventajas de Appetize.io en el Flujo de Desarrollo
 1. **Revisión y Evaluación Inmediata:** Los docentes o evaluadores pueden comprobar el funcionamiento real de la aplicación en streaming desde cualquier sistema operativo (Windows, macOS, Linux) sin necesidad de configurar SDKs, cables USB ni emuladores locales pesados.
@@ -182,6 +182,6 @@ A continuación se presentan las capturas reales obtenidas durante la sesión de
 
 ---
 
-## 🎓 Conclusiones de la Práctica
+##  Conclusiones de la Práctica
 
 El despliegue de **TisTos** en **Appetize.io** cumplió satisfactoriamente con todos los objetivos planteados en la rúbrica de la práctica. Se logró demostrar que una aplicación desarrollada con arquitectura limpia (**Clean Architecture**) en Flutter es plenamente capaz de compilarse en modo producción para el ecosistema Android y ejecutarse con estabilidad tanto en smartphones como en tablets bajo un entorno de virtualización en la nube.
