@@ -8,6 +8,13 @@
 - **Periodo:** Septiembre - Diciembre 2026
 - **Valor:** 30 Firmas
 
+<div align="center">
+
+[![Appetize.io Demo](https://img.shields.io/badge/Appetize.io-Probar%20en%20el%20Navegador-FF6B6B?style=for-the-badge&logo=android&logoColor=white)](https://appetize.io/app/b_o3aughhl5pz2mzfgg7nkygbzyy)
+[![Documentación Appetize](https://img.shields.io/badge/Appetize-Documentación%20de%20Publicación-02569B?style=for-the-badge)](appetize/README.md)
+
+</div>
+
 ---
 
 ##  Objetivo de la Práctica
