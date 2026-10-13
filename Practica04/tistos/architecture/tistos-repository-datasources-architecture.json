@@ -1,0 +1,304 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "TisTos · Arquitectura con Provider, Repositorio y Múltiples DataSources",
+    "output": "tistos-repository-datasources-architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "clean-architecture-flow",
+        "label": "Inversión de Dependencias (DIP)",
+        "focus": [
+          "ui_layer",
+          "feed_provider",
+          "repo_contract",
+          "repo_impl",
+          "datasource_contract"
+        ],
+        "note": "La UI y el Provider dependen de contratos de Dominio, aislando las fuentes de datos."
+      },
+      {
+        "id": "datasources-separation",
+        "label": "Múltiples DataSources (Local vs Remoto)",
+        "focus": [
+          "datasource_contract",
+          "local_datasource",
+          "remote_datasource",
+          "local_data"
+        ],
+        "note": "Desacoplamiento entre la persistencia local y el consumo de servicios de red externos."
+      },
+      {
+        "id": "external-apis-routing",
+        "label": "Orquestación de las 3 APIs de Video",
+        "focus": [
+          "remote_datasource",
+          "api_tikwm",
+          "api_pixabay",
+          "api_regional"
+        ],
+        "note": "Distribución hacia TikWM US (Para Ti), Pixabay Sports (Descubrir) y TikWM Regional MX con failover."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "ui_layer",
+      "type": "frontend",
+      "label": "UI: Feeds & Player",
+      "sublabel": "HomeScreen; VideoScrollableView",
+      "pos": [50, 140],
+      "size": [230, 80]
+    },
+    {
+      "id": "feed_provider",
+      "type": "frontend",
+      "label": "FeedProvider (State)",
+      "sublabel": "ChangeNotifierProvider; 4 pestañas",
+      "pos": [50, 320],
+      "size": [230, 80]
+    },
+    {
+      "id": "repo_contract",
+      "type": "backend",
+      "label": "VideoPostRepository",
+      "sublabel": "abstract class; Contrato de Dominio",
+      "pos": [370, 320],
+      "size": [230, 80]
+    },
+    {
+      "id": "repo_impl",
+      "type": "backend",
+      "label": "VideoPostsRepositoryImpl",
+      "sublabel": "Infraestructura; Recibe Datasource",
+      "pos": [370, 500],
+      "size": [230, 80]
+    },
+    {
+      "id": "datasource_contract",
+      "type": "backend",
+      "label": "VideoPostDatasource",
+      "sublabel": "abstract class; Contrato de Datos",
+      "pos": [690, 320],
+      "size": [230, 80]
+    },
+    {
+      "id": "local_datasource",
+      "type": "backend",
+      "label": "LocalVideoDatasource",
+      "sublabel": "Datasource 1 (Offline / Fallback)",
+      "pos": [690, 140],
+      "size": [230, 80]
+    },
+    {
+      "id": "remote_datasource",
+      "type": "backend",
+      "label": "RapidApiDatasource",
+      "sublabel": "Datasource 2 (Remoto / Dio Client)",
+      "pos": [690, 500],
+      "size": [230, 80]
+    },
+    {
+      "id": "local_data",
+      "type": "database",
+      "label": "Local Storage & Assets",
+      "sublabel": "local_video_post.dart; LocalVideoModel",
+      "pos": [1100, 140],
+      "size": [230, 80]
+    },
+    {
+      "id": "api_tikwm",
+      "type": "external",
+      "label": "API 1: TikWM (Para Ti)",
+      "sublabel": "feed/list; region=US; count=15",
+      "pos": [1100, 320],
+      "size": [230, 80]
+    },
+    {
+      "id": "api_pixabay",
+      "type": "external",
+      "label": "API 2: Pixabay (Descubrir)",
+      "sublabel": "vertical sports; Tiny MP4 640x360",
+      "pos": [1100, 500],
+      "size": [230, 80]
+    },
+    {
+      "id": "api_regional",
+      "type": "external",
+      "label": "API 3: Regional MX (Cerca de Ti)",
+      "sublabel": "TikWM MX Feed con Proxy / Failover",
+      "pos": [1100, 680],
+      "size": [230, 80]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "1. Capa de Presentación (UI & Estado)",
+      "wraps": [
+        "ui_layer",
+        "feed_provider"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "2. Capa de Dominio e Infraestructura Core",
+      "wraps": [
+        "repo_contract",
+        "repo_impl"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "3. Capa de Datasources (Local y Remoto)",
+      "wraps": [
+        "datasource_contract",
+        "local_datasource",
+        "remote_datasource"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "4. Fuentes de Datos (Local y 3 APIs Lógicas)",
+      "wraps": [
+        "local_data",
+        "api_tikwm",
+        "api_pixabay",
+        "api_regional"
+      ],
+      "pad": 16
+    }
+  ],
+  "connections": [
+    {
+      "id": "c_ui_provider",
+      "from": "ui_layer",
+      "to": "feed_provider",
+      "label": "escucha estado",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 44
+    },
+    {
+      "id": "c_provider_repo",
+      "from": "feed_provider",
+      "to": "repo_contract",
+      "label": "solicita videos",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -20
+    },
+    {
+      "id": "c_impl_repo",
+      "from": "repo_impl",
+      "to": "repo_contract",
+      "label": "implementa",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelDy": -20
+    },
+    {
+      "id": "c_impl_ds",
+      "from": "repo_impl",
+      "to": "datasource_contract",
+      "label": "delega llamadas",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "labelDy": -20
+    },
+    {
+      "id": "c_local_contract",
+      "from": "local_datasource",
+      "to": "datasource_contract",
+      "label": "implementa",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 44
+    },
+    {
+      "id": "c_remote_contract",
+      "from": "remote_datasource",
+      "to": "datasource_contract",
+      "label": "implementa",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelDy": -20
+    },
+    {
+      "id": "c_local_read",
+      "from": "local_datasource",
+      "to": "local_data",
+      "label": "lee assets",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -20
+    },
+    {
+      "id": "c_remote_tikwm",
+      "from": "remote_datasource",
+      "to": "api_tikwm",
+      "label": "GET US Feed",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -20
+    },
+    {
+      "id": "c_remote_pixabay",
+      "from": "remote_datasource",
+      "to": "api_pixabay",
+      "label": "GET Sports",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -20,
+      "labelAt": [965, 520]
+    },
+    {
+      "id": "c_remote_regional",
+      "from": "remote_datasource",
+      "to": "api_regional",
+      "label": "GET MX Feed",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -20
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Inversión de Dependencias (DIP)",
+      "items": [
+        "El FeedProvider depende exclusivamente de la abstracción VideoPostRepository de Dominio",
+        "La interfaz de usuario nunca conoce si los datos provienen de un archivo local o de endpoints HTTP"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Múltiples DataSources Desacoplados",
+      "items": [
+        "LocalVideoDatasource: Suministra videos estáticos embebidos para modo sin conexión o pruebas unitarias",
+        "RapidApiDatasource: Orquesta las solicitudes de red hacia múltiples proveedores con políticas de reintento"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Segmentación en 3 APIs Lógicas",
+      "items": [
+        "API 1 (TikWM US): Feed global de tendencias virales en la pestaña Para Ti",
+        "API 2 (Pixabay): Videos de deportes y acción optimizados en resolución tiny para bajo consumo de memoria",
+        "API 3 (Regional MX / Scraper): Contenido localizado con arquitectura de failover y proxy regional"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Beneficios de Clean Architecture",
+      "items": [
+        "Facilidad de testing mediante Mocks inyectables en VideoPostsRepositoryImpl",
+        "Escalabilidad inmediata para agregar nuevos orígenes de datos (ej. Firebase, GraphQL) sin modificar la UI"
+      ]
+    }
+  ]
+}

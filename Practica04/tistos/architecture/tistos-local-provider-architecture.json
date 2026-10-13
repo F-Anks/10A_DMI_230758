@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "TisTos · Arquitectura con Provider Local (Acoplamiento Directo)",
+    "output": "tistos-local-provider-architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "direct-data-flow",
+        "label": "Flujo Directo Monolítico",
+        "focus": [
+          "ui_screens",
+          "discover_provider",
+          "monolithic_coupling",
+          "direct_mapper",
+          "local_dataset"
+        ],
+        "note": "El Provider importa y consume directamente los datos locales sin pasar por un repositorio."
+      },
+      {
+        "id": "coupling-limitations",
+        "label": "Acoplamiento y Falta de Abstracción",
+        "focus": [
+          "monolithic_coupling",
+          "direct_mapper",
+          "local_dataset"
+        ],
+        "note": "Inexistencia de contratos abstractos (DIP violado): atado al esquema estático del archivo."
+      },
+      {
+        "id": "ui-consumption",
+        "label": "Consumo y Renderizado en UI",
+        "focus": [
+          "entity_video",
+          "ui_screens",
+          "discover_provider"
+        ],
+        "note": "La interfaz de usuario depende de entidades mapeadas manualmente dentro del mismo flujo acoplado."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "ui_screens",
+      "type": "frontend",
+      "label": "UI: Pantallas & Widgets",
+      "sublabel": "HomeScreen; VideoScrollableView",
+      "pos": [50, 140],
+      "size": [230, 80]
+    },
+    {
+      "id": "discover_provider",
+      "type": "frontend",
+      "label": "DiscoverProvider (State)",
+      "sublabel": "ChangeNotifier; Control de feeds",
+      "pos": [50, 320],
+      "size": [230, 80]
+    },
+    {
+      "id": "entity_video",
+      "type": "backend",
+      "label": "VideoPost Entity",
+      "sublabel": "id, caption, videoUrl, likes, views",
+      "pos": [690, 140],
+      "size": [230, 80]
+    },
+    {
+      "id": "monolithic_coupling",
+      "type": "backend",
+      "label": "Acoplamiento Directo",
+      "sublabel": "Sin Repositorio ni Inversión de Dependencias",
+      "pos": [370, 320],
+      "size": [230, 80]
+    },
+    {
+      "id": "direct_mapper",
+      "type": "backend",
+      "label": "LocalVideoModel",
+      "sublabel": "fromJson() -> toVideoPostEntity()",
+      "pos": [690, 320],
+      "size": [230, 80]
+    },
+    {
+      "id": "local_dataset",
+      "type": "database",
+      "label": "local_video_post.dart",
+      "sublabel": "videoPosts: List<Map<String, dynamic>>",
+      "pos": [1010, 320],
+      "size": [230, 80]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "1. Capa de Presentación (UI & Estado)",
+      "wraps": [
+        "ui_screens",
+        "discover_provider"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "2. Modelo de Dominio",
+      "wraps": [
+        "entity_video"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "3. Transformación y Acoplamiento Directo",
+      "wraps": [
+        "monolithic_coupling",
+        "direct_mapper"
+      ],
+      "pad": 16
+    },
+    {
+      "kind": "region",
+      "label": "4. Almacenamiento Local en Memoria",
+      "wraps": [
+        "local_dataset"
+      ],
+      "pad": 16
+    }
+  ],
+  "connections": [
+    {
+      "id": "c_ui_provider",
+      "from": "ui_screens",
+      "to": "discover_provider",
+      "label": "escucha estado",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 44
+    },
+    {
+      "id": "c_provider_coupling",
+      "from": "discover_provider",
+      "to": "monolithic_coupling",
+      "label": "carga directa",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -20
+    },
+    {
+      "id": "c_coupling_mapper",
+      "from": "monolithic_coupling",
+      "to": "direct_mapper",
+      "label": "procesa datos",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -20
+    },
+    {
+      "id": "c_mapper_dataset",
+      "from": "direct_mapper",
+      "to": "local_dataset",
+      "label": "lee archivo",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -20
+    },
+    {
+      "id": "c_mapper_entity",
+      "from": "direct_mapper",
+      "to": "entity_video",
+      "label": "toEntity()",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelDy": -20
+    },
+    {
+      "id": "c_entity_ui",
+      "from": "entity_video",
+      "to": "ui_screens",
+      "label": "renderiza en UI",
+      "fromSide": "left",
+      "toSide": "right",
+      "labelDy": -20
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Arquitectura Inicial (Provider Local)",
+      "items": [
+        "El Provider consume directamente los datos de un archivo local en memoria sin intermediación de repositorios",
+        "Diseño monolítico simple ideal para prototipos rápidos y pruebas de concepto de interfaz gráfica"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Violación de Inversión de Dependencias (DIP)",
+      "items": [
+        "Alto acoplamiento: La capa de estado conoce la estructura exacta y el nombre de archivo de la fuente de datos",
+        "Si los datos cambian o se migra a una API REST remota, se debe reescribir la lógica completa del Provider"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Limitaciones de Escalabilidad y Testing",
+      "items": [
+        "Imposibilidad de inyectar Mocks o DataSources alternativos durante pruebas unitarias automatizadas",
+        "Sin soporte nativo para conmutación por fallos (failover) o combinación simultánea de fuentes online y offline"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Justificación para Clean Architecture",
+      "items": [
+        "Esta arquitectura motiva la necesidad de migrar hacia el Diagrama 2 (Repositorio + Contratos abstractos)",
+        "Garantiza que el Provider no conozca el origen de los datos, logrando un código desacoplado y profesional"
+      ]
+    }
+  ]
+}

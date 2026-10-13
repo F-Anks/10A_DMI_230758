@@ -29,7 +29,7 @@ Dentro del directorio de cada práctica podrás encontrar el código fuente, el 
 | 01  | Metodologia de Evaluacion de la Materia | Revisión de la forma en que se evaluará la materia durante el cuatrimestre. |     05      | Completada    |
 | 02  | [Mi Primer Aplicaccion Movil con Flutter](/Practica02/hello_world/README.md) | App contador con botones para sumar, restar y reiniciar, con colores según el valor. |     25      | Completada    |
 | 03  | [Yes, No App](/Practica03/yes_no_app/README.md) | app de chat en Flutter que responda preguntas del usuario con si o no. |     30     | Completada    |
-| 04  | [TokTik](/Practica04/tistos/README.md)| El alumno creara una app de reproduccion de videos vertigales con el uso de providers y tematizacion temporal a halloween y Navidad |     ??      |  En curso |
+| 04  | [TisTos](/Practica04/tistos/README.md)| App de reproducción de videos verticales con Clean Architecture, Providers, 3 DataSources y tematización estacional. |     30      | Completada    |
  
 ------------------------------------------
 
