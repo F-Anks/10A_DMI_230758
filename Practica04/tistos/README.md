@@ -221,15 +221,19 @@ Para dar cumplimiento formal al requerimiento de la práctica, se diseñaron y c
 
 ## Evidencias Visuales y Videos Demostrativos
 
-A continuación se presentan las grabaciones en video del funcionamiento de la aplicación ejecutada en dispositivo físico:
+A continuación se presentan las grabaciones y demostraciones del funcionamiento de la aplicación ejecutada en dispositivo físico:
 
 ### 1. Demostración General de la Aplicación
 Navegación vertical fluida (*Vertical PageView*), cambio entre pestañas (*For You*, *Near You*, *Discover*, *Favorites*), interacción gestual (doble tap para dar like, pulsación larga para velocidad x2), control de mute/unmute y panel de descripción expandible con scroll.
 
 <div align="center">
-  <video src="assets/video/app_example.mp4" width="360" controls muted playsinline preload="metadata">
-    <a href="assets/video/app_example.mp4">Ver video app_example.mp4</a>
-  </video>
+
+[![Demostración de TisTos](assets/video/app_example.gif)](assets/video/app_example.mp4)
+
+<br/>
+
+👉 **[▶ Clic aquí para reproducir el Video Completo en Alta Resolución con Audio (app_example.mp4)](assets/video/app_example.mp4)**
+
 </div>
 
 <br/>
@@ -238,9 +242,13 @@ Navegación vertical fluida (*Vertical PageView*), cambio entre pestañas (*For 
 Pantalla de bienvenida animada con reloj de arena (*HourglassLoading*), reproducción de audio temático reactivo, selector interactivo de temporadas en tiempo real (Halloween, Navidad, San Valentín, Aniversario, Normal) y sincronización del lanzador de iconos dinámicos.
 
 <div align="center">
-  <video src="assets/video/splash_example.mp4" width="360" controls muted playsinline preload="metadata">
-    <a href="assets/video/splash_example.mp4">Ver video splash_example.mp4</a>
-  </video>
+
+[![Demostración del Splash Screen](assets/video/splash_example.gif)](assets/video/splash_example.mp4)
+
+<br/>
+
+👉 **[▶ Clic aquí para reproducir el Video Completo en Alta Resolución con Audio (splash_example.mp4)](assets/video/splash_example.mp4)**
+
 </div>
 
 ---
