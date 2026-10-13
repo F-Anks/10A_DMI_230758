@@ -8,6 +8,13 @@
 - **Periodo:** Septiembre - Diciembre 2026
 - **Valor:** 30 Firmas
 
+<div align="center">
+
+[![Appetize.io Demo](https://img.shields.io/badge/Appetize.io-Probar%20en%20el%20Navegador-FF6B6B?style=for-the-badge&logo=android&logoColor=white)](https://appetize.io/app/b_o3aughhl5pz2mzfgg7nkygbzyy)
+[![Documentación Appetize](https://img.shields.io/badge/Appetize-Documentación%20de%20Publicación-02569B?style=for-the-badge)](appetize/README.md)
+
+</div>
+
 ---
 
 ##  Objetivo de la Práctica
@@ -214,27 +221,19 @@ Para dar cumplimiento formal al requerimiento de la práctica, se diseñaron y c
 
 ## Evidencias Visuales y Videos Demostrativos
 
-A continuación se presentan las grabaciones en video del funcionamiento de la aplicación ejecutada en dispositivo físico:
+A continuación se presentan las grabaciones y demostraciones del funcionamiento de la aplicación ejecutada en dispositivo físico:
 
 ### 1. Demostración General de la Aplicación
 Navegación vertical fluida (*Vertical PageView*), cambio entre pestañas (*For You*, *Near You*, *Discover*, *Favorites*), interacción gestual (doble tap para dar like, pulsación larga para velocidad x2), control de mute/unmute y panel de descripción expandible con scroll.
 
-<div align="center">
-  <video src="assets/video/app_example.mp4" width="360" controls muted playsinline preload="metadata">
-    <a href="assets/video/app_example.mp4">Ver video app_example.mp4</a>
-  </video>
-</div>
+https://github.com/user-attachments/assets/c969184d-e151-4cda-9950-37851bdff4ab
 
 <br/>
 
 ### 2. Splash Screen y Sincronización de Temas Estacionales
 Pantalla de bienvenida animada con reloj de arena (*HourglassLoading*), reproducción de audio temático reactivo, selector interactivo de temporadas en tiempo real (Halloween, Navidad, San Valentín, Aniversario, Normal) y sincronización del lanzador de iconos dinámicos.
 
-<div align="center">
-  <video src="assets/video/splash_example.mp4" width="360" controls muted playsinline preload="metadata">
-    <a href="assets/video/splash_example.mp4">Ver video splash_example.mp4</a>
-  </video>
-</div>
+https://github.com/user-attachments/assets/d10cedd0-b3b8-4741-affc-23f909a9b2de
 
 ---
 
