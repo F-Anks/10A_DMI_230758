@@ -226,30 +226,14 @@ A continuación se presentan las grabaciones y demostraciones del funcionamiento
 ### 1. Demostración General de la Aplicación
 Navegación vertical fluida (*Vertical PageView*), cambio entre pestañas (*For You*, *Near You*, *Discover*, *Favorites*), interacción gestual (doble tap para dar like, pulsación larga para velocidad x2), control de mute/unmute y panel de descripción expandible con scroll.
 
-<div align="center">
-
-[![Demostración de TisTos](assets/video/app_example.gif)](assets/video/app_example.mp4)
-
-<br/>
-
-👉 **[▶ Clic aquí para reproducir el Video Completo en Alta Resolución con Audio (app_example.mp4)](assets/video/app_example.mp4)**
-
-</div>
+https://github.com/user-attachments/assets/c969184d-e151-4cda-9950-37851bdff4ab
 
 <br/>
 
 ### 2. Splash Screen y Sincronización de Temas Estacionales
 Pantalla de bienvenida animada con reloj de arena (*HourglassLoading*), reproducción de audio temático reactivo, selector interactivo de temporadas en tiempo real (Halloween, Navidad, San Valentín, Aniversario, Normal) y sincronización del lanzador de iconos dinámicos.
 
-<div align="center">
-
-[![Demostración del Splash Screen](assets/video/splash_example.gif)](assets/video/splash_example.mp4)
-
-<br/>
-
-👉 **[▶ Clic aquí para reproducir el Video Completo en Alta Resolución con Audio (splash_example.mp4)](assets/video/splash_example.mp4)**
-
-</div>
+https://github.com/user-attachments/assets/d10cedd0-b3b8-4741-affc-23f909a9b2de
 
 ---
 
