@@ -1,0 +1,174 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tistos/config/helpers/dynamic_icon_helper.dart';
+import 'package:tistos/presentation/models/feed_section.dart';
+import 'package:tistos/presentation/providers/feed_provider.dart';
+import 'package:tistos/presentation/screens/discover/discover_screen.dart';
+import 'package:tistos/presentation/screens/for_you/for_you_screen.dart';
+import 'package:tistos/presentation/screens/near_you/near_you_screen.dart';
+import 'package:tistos/presentation/screens/favorites/favorites_screen.dart';
+import 'package:tistos/presentation/widgets/glass/liquid_glass_tab_bar.dart';
+import 'package:tistos/presentation/widgets/shared/hourglass_loading.dart';
+import 'package:tistos/presentation/widgets/shared/animated_gradient_background.dart';
+import 'package:tistos/presentation/widgets/shared/privacy_dialog.dart';
+import 'package:tistos/presentation/widgets/shared/seasonal_corner_overlay.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+  int _selectedTab = 0; // 0: For You, 1: Near You, 2: Discover, 3: Favorites
+
+  // Controlador para deslizar horizontalmente entre secciones
+  final PageController _pageController = PageController();
+
+  // Evita que las páginas intermedias se activen al saltar con un tap
+  // (ej. de For you a Discover pasando por Near you)
+  bool _isAnimatingFromTap = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    PrivacyDialog.show(context);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Al reanudar la app tras cambiar la fecha en ajustes de Android,
+      // actualizamos el launcher icon y reconstruimos inmediatamente
+      DynamicIconHelper.syncWithCurrentSeason();
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  /// Cambia de sección al tocar una pestaña
+  void _onTabTap(int index) {
+    // Si selecciona la misma sección, refrescamos los videos
+    if (index == _selectedTab) {
+      context.read<FeedProvider>().refresh(FeedSection.values[index]);
+      return;
+    }
+
+    setState(() => _selectedTab = index);
+
+    final section = FeedSection.values[index];
+    if (index == 3) {
+      context.read<FeedProvider>().refresh(FeedSection.favorites);
+    } else {
+      if (context.read<FeedProvider>().feed(section).videos.isEmpty) {
+        context.read<FeedProvider>().refresh(section);
+      }
+    }
+
+    _isAnimatingFromTap = true;
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOutCubic,
+    ).then((_) {
+      _isAnimatingFromTap = false;
+    });
+  }
+
+  /// Se llama al deslizar con el dedo entre secciones
+  void _onPageChanged(int index) {
+    if (_isAnimatingFromTap) return;
+    if (index != _selectedTab) {
+      setState(() => _selectedTab = index);
+      final section = FeedSection.values[index];
+      if (index == 3) {
+        context.read<FeedProvider>().refresh(FeedSection.favorites);
+      } else {
+        if (context.read<FeedProvider>().feed(section).videos.isEmpty) {
+          context.read<FeedProvider>().refresh(section);
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<FeedProvider>();
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+
+    if (provider.initialLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      );
+    }
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Vista principal: scroll horizontal entre secciones
+          PageView(
+            controller: _pageController,
+            onPageChanged: _onPageChanged,
+            children: [
+              // Mientras una sección se refresca, su video se pausa
+              ForYouScreen(
+                isActive: _selectedTab == 0 && !provider.feed(FeedSection.forYou).isRefreshing,
+              ),
+              NearYouScreen(
+                isActive: _selectedTab == 1 && !provider.feed(FeedSection.nearYou).isRefreshing,
+              ),
+              DiscoverScreen(
+                isActive: _selectedTab == 2 && !provider.feed(FeedSection.discover).isRefreshing,
+              ),
+              FavoritesScreen(
+                isActive: _selectedTab == 3 && !provider.feed(FeedSection.favorites).isRefreshing,
+              ),
+            ],
+          ),
+
+          // Indicador de recarga de la sección actual
+          if (provider.feed(FeedSection.values[_selectedTab]).isRefreshing)
+            const AnimatedGradientBackground(
+              child: Center(
+                child: HourglassLoading(),
+              ),
+            ),
+
+          // Detalles decorativos sutiles en las esquinas según la temporada
+          // (telarañas en Halloween, nieve en Navidad, corazones en San Valentín, confeti en Aniversario)
+          // Se quitan automáticamente en orientación horizontal
+          if (!isLandscape)
+            SeasonalCornerOverlay(),
+
+          // Barra de navegación superior líquida
+          if (!isLandscape)
+            SafeArea(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: LiquidGlassTabBar(
+                    labels: FeedSection.values.map((s) => s.label).toList(),
+                    controller: _pageController,
+                    selectedIndex: _selectedTab,
+                    onTap: _onTabTap,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
