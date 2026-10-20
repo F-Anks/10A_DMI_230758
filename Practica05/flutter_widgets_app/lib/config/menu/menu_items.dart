@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class MenuItem {
   final String title;
   final String subTitle;
@@ -15,8 +14,14 @@ class MenuItem {
   });
 }
 
-
 const appMenuItems = <MenuItem>[
+
+  MenuItem(
+    title: 'Riverpod Counter', 
+    subTitle: 'Introducción a riverpod', 
+    link: '/counter-river', 
+    icon: Icons.add
+  ),
 
   MenuItem(
     title: 'Botones', 
@@ -74,5 +79,11 @@ const appMenuItems = <MenuItem>[
     icon: Icons.list_alt_rounded
   ),
 
+  MenuItem(
+    title: 'Cambiar tema', 
+    subTitle: 'Cambiar tema de la aplicación', 
+    link: '/theme-changer', 
+    icon: Icons.color_lens_outlined
+  ),
 
 ];
