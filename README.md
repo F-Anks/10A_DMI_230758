@@ -30,8 +30,8 @@ Dentro del directorio de cada práctica podrás encontrar el código fuente, el 
 | 02  | [Mi Primer Aplicaccion Movil con Flutter](/Practica02/hello_world/README.md) | App contador con botones para sumar, restar y reiniciar, con colores según el valor. |     25      | Completada    |
 | 03  | [Yes, No App](/Practica03/yes_no_app/README.md) | app de chat en Flutter que responda preguntas del usuario con si o no. |     30     | Completada    |
 | 04  | [TisTos](/Practica04/tistos/README.md)| App de reproducción de videos verticales con Clean Architecture, Providers, 3 DataSources y tematización estacional. |     30      | Completada    |
-| 04.1 | [Publicación en Appetize.io](/Practica04/tistos/appetize/README.md) | Despliegue en la nube de TisTos, pruebas en emuladores virtuales (Pixel 7 y Pixel Tablet) y validación en Appetize.io. |     -      | Completada    |
- 
+| 05 | [Publicación en Appetize.io](/Practica04/tistos/appetize/README.md) | Despliegue en la nube de TisTos, pruebas en emuladores virtuales (Pixel 7 y Pixel Tablet) y validación en Appetize.io. |     -      | Completada    |
+| 06 | [Ver en línea (PDF)](https://docs.google.com/viewer?url=https://raw.githubusercontent.com/F-Anks/10A_DMI_230758/main/Manual/Manual_Instalacion_Flutter_230758.pdf) | Manual de instalacion de examen practico |     -      | Completada    |
 ------------------------------------------
 
 ## Tecnologías y Herramientas
