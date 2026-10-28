@@ -88,62 +88,8 @@ El proyecto consolida los siguientes conceptos clave de desarrollo móvil:
 
 ## Diagrama de Arquitectura del Proyecto
 
-```mermaid
-flowchart TD
-    subgraph Storage["Persistencia en Disco"]
-        SP[("SharedPreferences\nselected_color_theme\nis_dark_mode")]
-    end
+Se incluye el diagrama interactivo de la arquitectura generado con **Archify**, ilustrando el flujo entre dependencias, proveedores de Riverpod (`ThemeNotifier` y `counterProvider`), enrutamiento con `GoRouter` y las pantallas de presentación:
 
-    subgraph Native["Capa Nativa Android"]
-        MC["MethodChannel\ncom.example.flutter_widgets_app/dynamic_icon"]
-        MA["MainActivity.kt\nqueueIconUpdate & applyPendingIconChange"]
-        Aliases["8 activity-alias en AndroidManifest.xml\nMainActivityTheme0 .. MainActivityTheme7"]
-        MC --> MA --> Aliases
-    end
-
-    subgraph AppBoot["Arranque de la Aplicación"]
-        Main["main.dart\nWidgetsFlutterBinding.ensureInitialized"]
-        InitPrefs["SharedPreferences.getInstance\nLectura previa de tema y modo"]
-        PS["ProviderScope\nOverrides iniciales"]
-        MainApp["MainApp (MaterialApp.router)"]
-        Main --> InitPrefs --> PS --> MainApp
-    end
-
-    subgraph State["Gestión de Estado (Riverpod)"]
-        TN["ThemeNotifier (StateNotifierProvider)\nAppTheme(selectedColor, isDarkmode)"]
-        CP["counterProvider (StateProvider)\nContador reactivo"]
-        DIH["DynamicIconHelper\nsetThemeIcon(int index)"]
-        TN -->|"guarda cambios"| SP
-        TN -->|"cambia icono"| DIH --> MC
-    end
-
-    subgraph Router["Navegación Declarativa (GoRouter)"]
-        AR["appRouter (12 rutas)\ninitialLocation: /splash"]
-    end
-
-    subgraph UI["Capa de Presentación (Vistas)"]
-        Splash["SplashScreen\n• 8 Logos (logo.jpg - logo8.jpg)\n• 8 Paletas degradado aurora\n• Insignia de tema activo"]
-        Home["HomeScreen\nCatálogo interactivo"]
-        ThemeChanger["ThemeChangerScreen\nSelector con miniaturas y feedback"]
-        Counter["CounterScreen\nContador + Conmutador Modo Oscuro"]
-        Demos["8 Demos de Widgets Material 3\nBotones, Tarjetas, Progreso, Snackbars,\nAnimated, Controles, Tutorial, InfiniteScroll"]
-    end
-
-    InitPrefs -.->|"precarga"| TN
-    MainApp --> AR
-    AR --> Splash
-    AR --> Home
-    AR --> ThemeChanger
-    AR --> Counter
-    AR --> Demos
-    TN -->|"colorSchemeSeed & DarkMode"| MainApp
-    TN -->|"observa tema activo"| Splash
-    TN -->|"actualiza tema"| ThemeChanger
-    TN -->|"conmuta modo oscuro"| Counter
-    CP -->|"valor de cuenta"| Counter
-```
-
-Se incluye también el esquema interactivo de la arquitectura generado con **Archify**:
 - **[Ver Diagrama Interactivo en Vivo (GitHub Pages)](https://f-anks.github.io/10A_DMI_230758/Practica05/flutter_widgets_app/architecture/flutter_widgets_app-architecture.html)**
 - **[Archivo Local HTML](architecture/flutter_widgets_app-architecture.html)** | **[Esquema JSON](architecture/flutter_widgets_app.architecture.json)**
 

@@ -2,90 +2,35 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "Arquitectura de Ridgets App (Flutter Widgets App)",
+    "title": "Arquitectura de Flutter Widgets",
     "output": "flutter_widgets_app-architecture.html",
     "quality_profile": "showcase",
     "repository": {
       "url": "https://github.com/F-Anks/10A_DMI_230758.git",
-      "revision": "7aa9296"
+      "revision": "b64321a8759c82022ae83fa145b8a7746c752053"
     },
-    "viewBox": [1000, 560]
+    "viewBox": [950, 400]
   },
   "components": [
     {
       "id": "dependencies",
       "type": "cloud",
       "label": "Dependencias Flutter",
-      "sublabel": "Riverpod · GoRouter · shared_preferences · animate_do",
-      "pos": [35, 40],
-      "size": [250, 90],
+      "sublabel": "Riverpod · GoRouter · animate_do",
+      "pos": [35, 60],
+      "size": [230, 90],
       "sources": [{ "path": "Practica05/flutter_widgets_app/pubspec.yaml" }]
-    },
-    {
-      "id": "storage",
-      "type": "database",
-      "label": "SharedPreferences",
-      "sublabel": "Persistencia en disco (tema e icono)",
-      "pos": [360, 40],
-      "size": [250, 90],
-      "sources": [{ "path": "Practica05/flutter_widgets_app/lib/main.dart" }]
-    },
-    {
-      "id": "native_android",
-      "type": "external",
-      "label": "Android Nativo (Host)",
-      "sublabel": "MainActivity · 8 activity-alias · MethodChannel",
-      "pos": [680, 40],
-      "size": [280, 90],
-      "sources": [
-        { "path": "Practica05/flutter_widgets_app/android/app/src/main/AndroidManifest.xml" },
-        { "path": "Practica05/flutter_widgets_app/android/app/src/main/kotlin/com/example/flutter_widgets_app/MainActivity.kt" }
-      ]
-    },
-    {
-      "id": "app_root",
-      "type": "frontend",
-      "label": "main.dart · MainApp",
-      "sublabel": "Init SharedPreferences · ProviderScope · MaterialApp.router",
-      "pos": [35, 210],
-      "size": [250, 96],
-      "sources": [{ "path": "Practica05/flutter_widgets_app/lib/main.dart" }]
     },
     {
       "id": "providers",
       "type": "backend",
-      "label": "Riverpod Providers",
-      "sublabel": "ThemeNotifier · counterProvider · DynamicIconHelper",
-      "pos": [360, 210],
-      "size": [250, 96],
+      "label": "Riverpod providers",
+      "sublabel": "ThemeNotifier · counterProvider",
+      "pos": [350, 60],
+      "size": [230, 90],
       "sources": [
         { "path": "Practica05/flutter_widgets_app/lib/presentation/providers/theme_provider.dart" },
-        { "path": "Practica05/flutter_widgets_app/lib/config/helpers/dynamic_icon_helper.dart" },
-        { "path": "Practica05/flutter_widgets_app/lib/config/theme/app_theme.dart" }
-      ]
-    },
-    {
-      "id": "router",
-      "type": "frontend",
-      "label": "appRouter · GoRouter",
-      "sublabel": "12 rutas declarativas · inicio en /splash",
-      "pos": [680, 210],
-      "size": [280, 96],
-      "sources": [{ "path": "Practica05/flutter_widgets_app/lib/config/router/app_router.dart" }]
-    },
-    {
-      "id": "presentation",
-      "type": "frontend",
-      "label": "Presentación & Vistas",
-      "sublabel": "SplashScreen (8 temas/logos) · Home · ThemeChanger · 8 Demos",
-      "pos": [260, 390],
-      "size": [440, 120],
-      "sources": [
-        { "path": "Practica05/flutter_widgets_app/lib/presentation/screens/splash/splash_screen.dart" },
-        { "path": "Practica05/flutter_widgets_app/lib/presentation/screens/theme_changer/theme_changer_screen.dart" },
-        { "path": "Practica05/flutter_widgets_app/lib/presentation/screens/counter/counter_screen.dart" },
-        { "path": "Practica05/flutter_widgets_app/lib/presentation/screens/home/home_screen.dart" },
-        { "path": "Practica05/flutter_widgets_app/lib/presentation/widgets/side_menu.dart" }
+        { "path": "Practica05/flutter_widgets_app/lib/presentation/providers/counter_provider.dart" }
       ]
     },
     {
@@ -93,9 +38,40 @@
       "type": "external",
       "label": "Picsum Photos",
       "sublabel": "InfiniteScroll · NetworkImage",
-      "pos": [750, 390],
-      "size": [210, 120],
+      "pos": [660, 60],
+      "size": [230, 90],
       "sources": [{ "path": "Practica05/flutter_widgets_app/lib/presentation/screens/infinite_scroll/infinite_scroll_screen.dart" }]
+    },
+    {
+      "id": "app_root",
+      "type": "frontend",
+      "label": "main.dart · MainApp",
+      "sublabel": "ProviderScope · MaterialApp.router",
+      "pos": [35, 250],
+      "size": [230, 96],
+      "sources": [{ "path": "Practica05/flutter_widgets_app/lib/main.dart" }]
+    },
+    {
+      "id": "router",
+      "type": "frontend",
+      "label": "appRouter · GoRouter",
+      "sublabel": "11 rutas · inicio en /",
+      "pos": [350, 250],
+      "size": [230, 96],
+      "sources": [{ "path": "Practica05/flutter_widgets_app/lib/config/router/app_router.dart" }]
+    },
+    {
+      "id": "presentation",
+      "type": "frontend",
+      "label": "Presentación",
+      "sublabel": "Home · 8 demos · contador · tema",
+      "pos": [660, 250],
+      "size": [230, 110],
+      "sources": [
+        { "path": "Practica05/flutter_widgets_app/lib/presentation/screens/home/home_screen.dart" },
+        { "path": "Practica05/flutter_widgets_app/lib/presentation/widgets/side_menu.dart" },
+        { "path": "Practica05/flutter_widgets_app/lib/config/router/app_router.dart" }
+      ]
     }
   ],
   "connections": [
@@ -103,74 +79,45 @@
       "id": "dependencies-root",
       "from": "dependencies",
       "to": "app_root",
-      "label": "paquetes"
-    },
-    {
-      "id": "storage-root",
-      "from": "storage",
-      "to": "app_root",
-      "label": "precarga tema"
-    },
-    {
-      "id": "root-router",
-      "from": "app_root",
-      "to": "router",
-      "label": "inyecta rutas"
-    },
-    {
-      "id": "root-providers",
-      "from": "app_root",
-      "to": "providers",
-      "label": "inyecta estado"
-    },
-    {
-      "id": "providers-storage",
-      "from": "providers",
-      "to": "storage",
-      "label": "persiste"
-    },
-    {
-      "id": "providers-native",
-      "from": "providers",
-      "to": "native_android",
-      "label": "MethodChannel"
+      "label": "paquetes",
+      "labelAt": [150, 164]
     },
     {
       "id": "providers-presentation",
       "from": "providers",
       "to": "presentation",
-      "label": "reactividad"
+      "label": "estado"
+    },
+    {
+      "id": "root-router",
+      "from": "app_root",
+      "to": "router",
+      "label": "configura"
     },
     {
       "id": "router-presentation",
       "from": "router",
       "to": "presentation",
-      "label": "navega"
+      "label": "rutas",
+      "labelAt": [643, 296]
     },
     {
       "id": "presentation-picsum",
       "from": "presentation",
       "to": "picsum",
-      "label": "HTTPS"
+      "label": "HTTPS",
+      "fromSide": "top",
+      "toSide": "bottom"
     }
   ],
   "cards": [
     {
-      "dot": "emerald",
-      "title": "Persistencia y Estado",
-      "items": [
-        "SharedPreferences almacena selected_color_theme e is_dark_mode en disco.",
-        "ThemeNotifier precarga las preferencias al arrancar y sincroniza cambios de tema y modo oscuro en tiempo real.",
-        "CounterScreen y ThemeChangerScreen comparten el mismo estado global de modo oscuro mediante themeNotifierProvider."
-      ]
-    },
-    {
       "dot": "violet",
-      "title": "Cambio Dinámico de Ícono y Multi-Splash",
+      "title": "Estado y recursos",
       "items": [
-        "DynamicIconHelper invoca el canal nativo com.example.flutter_widgets_app/dynamic_icon.",
-        "MainActivity.kt commuta atómicamente entre 8 activity-alias en onStop() para actualizar el lanzador sin cerrar la app.",
-        "SplashScreen detecta el tema activo al iniciar y despliega el logotipo (logo.jpg a logo8.jpg), degradado aurora y nombre correspondiente."
+        "MainApp observa ThemeNotifier/AppTheme; ThemeChangerScreen cambia el tema global.",
+        "CounterScreen usa counterProvider e isDarkmodeProvider separados del tema global.",
+        "Tutorial y loader usan assets/images; InfiniteScroll carga imágenes desde Picsum Photos."
       ]
     }
   ]
