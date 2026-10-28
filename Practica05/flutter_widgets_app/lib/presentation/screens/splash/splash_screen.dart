@@ -2,19 +2,21 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_widgets_app/config/theme/app_theme.dart';
+import 'package:flutter_widgets_app/presentation/providers/theme_provider.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   static const String name = 'splash_screen';
 
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with TickerProviderStateMixin {
   late final AnimationController _bgController;
   late final AnimationController _introController;
@@ -23,14 +25,83 @@ class _SplashScreenState extends State<SplashScreen>
   late final Animation<double> _textFade;
   late final Animation<Offset> _textSlide;
 
-  // Paleta de colores del icono (assets/images/logo.jpg) combinada con
-  // el color por defecto de la aplicación (colorList[0] = Colors.blue).
-  static final List<Color> _paletteColors = [
-    const Color(0xFF060B26), // Azul medianoche profundo del icono
-    colorList.first,         // Color por defecto de la app (Colors.blue)
-    const Color(0xFF5E35B1), // Violeta/índigo del cabello y circuitos
-    const Color(0xFF00E5FF), // Cian eléctrico del logo Flutter y Riverpod
-    const Color(0xFFAB47BC), // Magenta/púrpura neón de los nodos y destellos
+  // Paletas personalizadas para cada uno de los 8 temas y sus respectivos logos
+  static const List<List<Color>> _themePalettes = [
+    // 0: Azul
+    [
+      Color(0xFF060B26),
+      Colors.blue,
+      Color(0xFF5E35B1),
+      Color(0xFF00E5FF),
+      Color(0xFFAB47BC),
+    ],
+    // 1: Teal
+    [
+      Color(0xFF021B1F),
+      Colors.teal,
+      Color(0xFF00897B),
+      Color(0xFF1DE9B6),
+      Color(0xFF00B0FF),
+    ],
+    // 2: Verde
+    [
+      Color(0xFF081C0B),
+      Colors.green,
+      Color(0xFF2E7D32),
+      Color(0xFF00E676),
+      Color(0xFFC6FF00),
+    ],
+    // 3: Púrpura
+    [
+      Color(0xFF180726),
+      Colors.purple,
+      Color(0xFF7B1FA2),
+      Color(0xFFE040FB),
+      Color(0xFF7C4DFF),
+    ],
+    // 4: Púrpura profundo
+    [
+      Color(0xFF120324),
+      Colors.deepPurple,
+      Color(0xFF512DA8),
+      Color(0xFF7C4DFF),
+      Color(0xFFB388FF),
+    ],
+    // 5: Naranja
+    [
+      Color(0xFF241002),
+      Colors.orange,
+      Color(0xFFE65100),
+      Color(0xFFFF9100),
+      Color(0xFFFFD600),
+    ],
+    // 6: Rosa
+    [
+      Color(0xFF240715),
+      Colors.pink,
+      Color(0xFFC2185B),
+      Color(0xFFFF4081),
+      Color(0xFFFF80AB),
+    ],
+    // 7: Rosa Accent
+    [
+      Color(0xFF260215),
+      Colors.pinkAccent,
+      Color(0xFF880E4F),
+      Color(0xFFFF1744),
+      Color(0xFFFF4081),
+    ],
+  ];
+
+  static const List<Color> _secondaryGlows = [
+    Color(0xFF00E5FF),
+    Color(0xFF1DE9B6),
+    Color(0xFF00E676),
+    Color(0xFFE040FB),
+    Color(0xFFB388FF),
+    Color(0xFFFF9100),
+    Color(0xFFFF4081),
+    Color(0xFFFF1744),
   ];
 
   @override
@@ -75,7 +146,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateToHome() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(milliseconds: 3800));
     if (!mounted) return;
     context.go('/');
   }
@@ -104,10 +175,22 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final appTheme = ref.watch(themeNotifierProvider);
+    final selectedColor = (appTheme.selectedColor >= 0 &&
+            appTheme.selectedColor < colorList.length)
+        ? appTheme.selectedColor
+        : 0;
+
+    final paletteColors = _themePalettes[selectedColor];
+    final glowColor = colorList[selectedColor];
+    final secondaryGlow = _secondaryGlows[selectedColor];
+    final logoPath = getLogoPath(selectedColor);
+    final themeName = themeNames[selectedColor];
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
-        backgroundColor: _paletteColors.first,
+        backgroundColor: paletteColors.first,
         body: AnimatedBuilder(
           animation: _bgController,
           builder: (context, child) {
@@ -117,28 +200,28 @@ class _SplashScreenState extends State<SplashScreen>
             return Stack(
               fit: StackFit.expand,
               children: [
-                // Fondo con degradado dinámico usando la paleta del icono y el color default
+                // Fondo con degradado animado dinámico según el tema activo
                 DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment(math.cos(angle), math.sin(angle)),
                       end: Alignment(-math.cos(angle), -math.sin(angle)),
-                      colors: _shiftedColors(_paletteColors, t),
+                      colors: _shiftedColors(paletteColors, t),
                     ),
                   ),
                 ),
 
-                // Manchas de luz difuminadas (efecto aurora con colores del icono y default)
+                // Manchas de luz difuminadas (efecto aurora con la paleta del tema)
                 for (int i = 0; i < 3; i++)
                   _GlowBlob(
-                    color: _paletteColors[(i + 1) % _paletteColors.length],
+                    color: paletteColors[(i + 1) % paletteColors.length],
                     alignment: Alignment(
                       math.sin(angle + i * 2.1) * 0.9,
                       math.cos(angle * (i.isEven ? 1 : -1) + i * 1.3) * 0.8,
                     ),
                   ),
 
-                // Velo radial sutil para resaltar el icono y título
+                // Velo radial sutil para resaltar el logo y texto
                 const DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: RadialGradient(
@@ -162,7 +245,9 @@ class _SplashScreenState extends State<SplashScreen>
                     scale: _logoScale,
                     child: _AnimatedLogo(
                       pulse: _bgController,
-                      glowColor: colorList.first,
+                      glowColor: glowColor,
+                      secondaryGlow: secondaryGlow,
+                      logoPath: logoPath,
                     ),
                   ),
                 ),
@@ -171,9 +256,9 @@ class _SplashScreenState extends State<SplashScreen>
                   opacity: _textFade,
                   child: SlideTransition(
                     position: _textSlide,
-                    child: const Column(
+                    child: Column(
                       children: [
-                        Text(
+                        const Text(
                           'Ridgets App',
                           style: TextStyle(
                             fontSize: 42,
@@ -189,17 +274,53 @@ class _SplashScreenState extends State<SplashScreen>
                             ],
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
                           'Flutter • Material 3 • Riverpod',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.2,
-                            color: Color(0xCCBBDEFB),
+                            color: Colors.white.withAlpha(210),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: glowColor.withAlpha(50),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: glowColor.withAlpha(140),
+                              width: 1,
+                            ),
+                          ),
+                          child: Text(
+                            themeName,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 48),
+                FadeTransition(
+                  opacity: _textFade,
+                  child: SizedBox(
+                    width: 38,
+                    height: 38,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3.2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        secondaryGlow,
+                      ),
                     ),
                   ),
                 ),
@@ -215,10 +336,14 @@ class _SplashScreenState extends State<SplashScreen>
 class _AnimatedLogo extends StatelessWidget {
   final Animation<double> pulse;
   final Color glowColor;
+  final Color secondaryGlow;
+  final String logoPath;
 
   const _AnimatedLogo({
     required this.pulse,
     required this.glowColor,
+    required this.secondaryGlow,
+    required this.logoPath,
   });
 
   static const double _size = 168;
@@ -242,7 +367,7 @@ class _AnimatedLogo extends StatelessWidget {
                 spreadRadius: 2 + 6 * glow,
               ),
               BoxShadow(
-                color: const Color(0xFF00E5FF).withAlpha((70 + 60 * glow).round()),
+                color: secondaryGlow.withAlpha((70 + 60 * glow).round()),
                 blurRadius: 18 + 16 * glow,
                 spreadRadius: 1 + 3 * glow,
               ),
@@ -256,7 +381,7 @@ class _AnimatedLogo extends StatelessWidget {
         child: Transform.scale(
           scale: 1.03,
           child: Image.asset(
-            'assets/images/logo.jpg',
+            logoPath,
             width: _size,
             height: _size,
             fit: BoxFit.cover,
@@ -290,4 +415,3 @@ class _GlowBlob extends StatelessWidget {
     );
   }
 }
-
