@@ -86,73 +86,65 @@ El proyecto consolida los siguientes conceptos clave de desarrollo móvil:
 
 ---
 
-## Arquitectura del Proyecto
-
-El código fuente sigue una estructura modular organizada en capas de configuración (`config`) y presentación (`presentation`):
-
-```
-📦 flutter_widgets_app/
-├── 📂 assets/
-│   └── 📂 images/                             ← Recursos gráficos (logo.jpg a logo8.jpg) y capturas de evidencia
-│
-├── 📂 architecture/                           ← Diagramas interactivos generados con Archify
-│
-├── 📂 lib/
-│   ├── 📂 config/                             ← Configuración transversal de la aplicación
-│   │   ├── 📂 helpers/
-│   │   │   └── 📄 dynamic_icon_helper.dart    ← Canal MethodChannel para invocar cambio de alias en Android
-│   │   ├── 📂 menu/
-│   │   │   └── 📄 menu_items.dart             ← Definición inmutable de opciones de navegación (MenuItem)
-│   │   ├── 📂 router/
-│   │   │   └── 📄 app_router.dart             ← Configuración de GoRouter (12 rutas, inicio en /splash)
-│   │   └── 📂 theme/
-│   │       └── 📄 app_theme.dart              ← Clase AppTheme con paleta de 8 colores, nombres y getLogoPath
-│   │
-│   ├── 📂 presentation/                       ← Capa de Presentación (UI, Widgets y Estado con Riverpod)
-│   │   ├── 📂 providers/
-│   │   │   ├── 📄 counter_provider.dart       ← StateProvider<int> para el contador reactivo
-│   │   │   └── 📄 theme_provider.dart         ← ThemeNotifier con persistencia local en SharedPreferences
-│   │   ├── 📂 screens/
-│   │   │   ├── 📂 splash/
-│   │   │   │   └── 📄 splash_screen.dart      ← Splash dinámico según el tema activo con degradado aurora y logo
-│   │   │   ├── 📂 home/
-│   │   │   │   └── 📄 home_screen.dart        ← Pantalla principal con listado de secciones y Drawer
-│   │   │   ├── 📂 counter/
-│   │   │   │   └── 📄 counter_screen.dart     ← Contador Riverpod con conmutador de Modo Oscuro / Claro
-│   │   │   ├── 📂 buttons/
-│   │   │   │   └── 📄 buttons_screen.dart     ← Demostración de variantes de botones Material 3 y botón personalizado
-│   │   │   ├── 📂 cards/
-│   │   │   │   └── 📄 cards_screen.dart       ← Tarjetas con elevación, bordes, relleno e imágenes de red
-│   │   │   ├── 📂 progress/
-│   │   │   │   └── 📄 progress_screen.dart    ← Indicadores de progreso circulares/lineales controlados por Stream
-│   │   │   ├── 📂 snackbar/
-│   │   │   │   └── 📄 snackbar_screen.dart    ← Snackbars personalizados y diálogos modales de licencias/alerta
-│   │   │   ├── 📂 animated/
-│   │   │   │   └── 📄 animated_screen.dart    ← AnimatedContainer con geometría, color y bordes aleatorios
-│   │   │   ├── 📂 ui_controls/
-│   │   │   │   └── 📄 ui_controls_screen.dart ← SwitchListTile, ExpansionTile, RadioListTile y CheckboxListTile
-│   │   │   ├── 📂 app_tutorial/
-│   │   │   │   └── 📄 app_tutorial_screen.dart← PageView introductorio con detección de última página
-│   │   │   ├── 📂 infinite_scroll/
-│   │   │   │   └── 📄 infinite_scroll_screen.dart ← Paginación asíncrona con Picsum Photos y Pull to Refresh
-│   │   │   ├── 📂 theme_changer/
-│   │   │   │   └── 📄 theme_changer_screen.dart   ← Selector interactivo con miniaturas de logo, feedback y RadioListTile
-│   │   │   └── 📄 screens.dart                ← Archivo barril (barrel file) de exportación de pantallas
-│   │   └── 📂 widgets/
-│   │       └── 📄 side_menu.dart              ← NavigationDrawer adaptable a notch con secciones divididas
-│   │
-│   └── 📄 main.dart                           ← Inicialización síncrona de SharedPreferences y ProviderScope
-│
-└── 📄 pubspec.yaml                            ← Manifiesto de dependencias, assets y configuración de íconos
-```
-
----
-
 ## Diagrama de Arquitectura del Proyecto
 
-Se incluye el diagrama interactivo de la arquitectura generado con **Archify**, ilustrando el flujo entre dependencias, proveedores de Riverpod (`ThemeNotifier` y `counterProvider`), enrutamiento con `GoRouter` y las pantallas de presentación:
+```mermaid
+flowchart TD
+    subgraph Storage["Persistencia en Disco"]
+        SP[("SharedPreferences\nselected_color_theme\nis_dark_mode")]
+    end
 
-- **[Ver Diagrama en Vivo (GitHub Pages)](https://f-anks.github.io/10A_DMI_230758/Practica05/flutter_widgets_app/architecture/flutter_widgets_app-architecture.html)**
+    subgraph Native["Capa Nativa Android"]
+        MC["MethodChannel\ncom.example.flutter_widgets_app/dynamic_icon"]
+        MA["MainActivity.kt\nqueueIconUpdate & applyPendingIconChange"]
+        Aliases["8 activity-alias en AndroidManifest.xml\nMainActivityTheme0 .. MainActivityTheme7"]
+        MC --> MA --> Aliases
+    end
+
+    subgraph AppBoot["Arranque de la Aplicación"]
+        Main["main.dart\nWidgetsFlutterBinding.ensureInitialized"]
+        InitPrefs["SharedPreferences.getInstance\nLectura previa de tema y modo"]
+        PS["ProviderScope\nOverrides iniciales"]
+        MainApp["MainApp (MaterialApp.router)"]
+        Main --> InitPrefs --> PS --> MainApp
+    end
+
+    subgraph State["Gestión de Estado (Riverpod)"]
+        TN["ThemeNotifier (StateNotifierProvider)\nAppTheme(selectedColor, isDarkmode)"]
+        CP["counterProvider (StateProvider)\nContador reactivo"]
+        DIH["DynamicIconHelper\nsetThemeIcon(int index)"]
+        TN -->|"guarda cambios"| SP
+        TN -->|"cambia icono"| DIH --> MC
+    end
+
+    subgraph Router["Navegación Declarativa (GoRouter)"]
+        AR["appRouter (12 rutas)\ninitialLocation: /splash"]
+    end
+
+    subgraph UI["Capa de Presentación (Vistas)"]
+        Splash["SplashScreen\n• 8 Logos (logo.jpg - logo8.jpg)\n• 8 Paletas degradado aurora\n• Insignia de tema activo"]
+        Home["HomeScreen\nCatálogo interactivo"]
+        ThemeChanger["ThemeChangerScreen\nSelector con miniaturas y feedback"]
+        Counter["CounterScreen\nContador + Conmutador Modo Oscuro"]
+        Demos["8 Demos de Widgets Material 3\nBotones, Tarjetas, Progreso, Snackbars,\nAnimated, Controles, Tutorial, InfiniteScroll"]
+    end
+
+    InitPrefs -.->|"precarga"| TN
+    MainApp --> AR
+    AR --> Splash
+    AR --> Home
+    AR --> ThemeChanger
+    AR --> Counter
+    AR --> Demos
+    TN -->|"colorSchemeSeed & DarkMode"| MainApp
+    TN -->|"observa tema activo"| Splash
+    TN -->|"actualiza tema"| ThemeChanger
+    TN -->|"conmuta modo oscuro"| Counter
+    CP -->|"valor de cuenta"| Counter
+```
+
+Se incluye también el esquema interactivo de la arquitectura generado con **Archify**:
+- **[Ver Diagrama Interactivo en Vivo (GitHub Pages)](https://f-anks.github.io/10A_DMI_230758/Practica05/flutter_widgets_app/architecture/flutter_widgets_app-architecture.html)**
 - **[Archivo Local HTML](architecture/flutter_widgets_app-architecture.html)** | **[Esquema JSON](architecture/flutter_widgets_app.architecture.json)**
 
 | Modo Oscuro | Modo Claro |
@@ -161,18 +153,37 @@ Se incluye el diagrama interactivo de la arquitectura generado con **Archify**, 
 
 ---
 
-## Evidencias Visuales y Secciones Implementadas
+## Evidencias Visuales de los 8 Splash Screens en Funcionamiento
 
-### 1. Sistema Dinámico de 8 Splash Screens, Íconos y Almacenamiento Local
-Se implementó un sistema integral donde cada tema cuenta con su propio logotipo (`logo.jpg` a `logo8.jpg`), degradado aurora dinámico y cambio atómico de ícono de lanzador nativo. Al cambiar de tema, la preferencia se persiste inmediatamente en `shared_preferences` y el nuevo ícono queda reflejado en el sistema operativo sin cerrar la app. Al reabrirla, se despliega el Splash correspondiente.
+Cada tema cuenta con su propio logotipo (`logo.jpg` a `logo8.jpg`), degradado aurora dinámico y cambio atómico de ícono de lanzador nativo. Al seleccionar un tema en `ThemeChangerScreen`, la preferencia se persiste en `shared_preferences` y, al cerrar y reabrir la app, el `SplashScreen` arranca directamente con los colores, insignia y logotipo correspondientes a esa selección:
 
-| Splash Tema Azul (Por Defecto) | Splash Tema Naranja (Guardado) | Selector de Temas con Logos | Ícono Dinámico en el Sistema |
+### Galería de Splash Screens (Temas 0 a 3)
+
+| Tema 0: Azul Clásico | Tema 1: Teal | Tema 2: Verde Esmeralda | Tema 3: Púrpura Vibrante |
 | :---: | :---: | :---: | :---: |
-| <img src="assets/images/00_splash_screen.png" alt="Splash Screen Azul" width="220"/> | <img src="assets/images/splash_orange.png" alt="Splash Screen Naranja" width="220"/> | <img src="assets/images/12_theme_changer.png" alt="Selector de Temas" width="220"/> | <img src="assets/images/13_app_icon.png" alt="Icono en Launcher" width="220"/> |
+| <img src="assets/images/splash_theme_0_blue.png" alt="Splash Tema 0 Azul" width="220"/> | <img src="assets/images/splash_theme_1_teal.png" alt="Splash Tema 1 Teal" width="220"/> | <img src="assets/images/splash_theme_2_green.png" alt="Splash Tema 2 Verde" width="220"/> | <img src="assets/images/splash_theme_3_purple.png" alt="Splash Tema 3 Púrpura" width="220"/> |
+| `logo.jpg` · `#2196F3` | `logo2.jpg` · `#009688` | `logo3.jpg` · `#4CAF50` | `logo4.jpg` · `#9C27B0` |
+
+### Galería de Splash Screens (Temas 4 a 7)
+
+| Tema 4: Púrpura Profundo | Tema 5: Naranja Cálido | Tema 6: Rosa Suave | Tema 7: Rosa Neón (Accent) |
+| :---: | :---: | :---: | :---: |
+| <img src="assets/images/splash_theme_4_deep_purple.png" alt="Splash Tema 4 Deep Purple" width="220"/> | <img src="assets/images/splash_theme_5_orange.png" alt="Splash Tema 5 Naranja" width="220"/> | <img src="assets/images/splash_theme_6_pink.png" alt="Splash Tema 6 Rosa" width="220"/> | <img src="assets/images/splash_theme_7_pink_accent.png" alt="Splash Tema 7 Rosa Accent" width="220"/> |
+| `logo5.jpg` · `#673AB7` | `logo6.jpg` · `#FF9800` | `logo7.jpg` · `#E91E63` | `logo8.jpg` · `#FF4081` |
 
 ---
 
-### 2. Pantalla Principal (`HomeScreen`) y Menú Lateral (`SideMenu`)
+## Evidencias de Conmutación Dinámica de Íconos y Selector de Temas
+
+| Selector de Temas con Miniaturas | Notificación Interactiva SnackBar | Ícono Activo en Pantalla de Inicio | Ícono en Cajón de Aplicaciones |
+| :---: | :---: | :---: | :---: |
+| <img src="assets/images/12_theme_changer.png" alt="Selector de Temas" width="220"/> | <img src="assets/images/12_theme_changer_snackbar.png" alt="Feedback SnackBar" width="220"/> | <img src="assets/images/13_app_icon.png" alt="Launcher Icon" width="220"/> | <img src="assets/images/13_app_drawer_icon.png" alt="App Drawer Icon" width="220"/> |
+
+---
+
+## Evidencias de Secciones y Catálogo de Widgets
+
+### 1. Pantalla Principal (`HomeScreen`) y Menú Lateral (`SideMenu`)
 Listado principal de secciones construido a partir de `appMenuItems` y menú de navegación lateral (`NavigationDrawer`) con soporte de *safe area* y *notch*.
 
 | Pantalla Principal (`HomeScreen`) | Menú Lateral (`NavigationDrawer`) |
@@ -181,7 +192,7 @@ Listado principal de secciones construido a partir de `appMenuItems` y menú de 
 
 ---
 
-### 3. Riverpod Counter (Modo Claro y Modo Oscuro Sincronizados)
+### 2. Riverpod Counter (Modo Claro y Modo Oscuro Sincronizados)
 Gestión del contador mediante `counterProvider` y sincronización del botón de **Modo Oscuro / Modo Claro** en el `AppBar` conectándolo directamente a `themeNotifierProvider` (`ref.read(themeNotifierProvider.notifier).toggleDarkmode()`), permitiendo alternar el tema global de toda la aplicación desde esta pantalla al igual que en la sección *Cambiar tema*.
 
 | Riverpod Counter — Modo Claro | Riverpod Counter — Modo Oscuro |
@@ -190,7 +201,7 @@ Gestión del contador mediante `counterProvider` y sincronización del botón de
 
 ---
 
-### 4. Botones (`ButtonsScreen`) y Tarjetas (`CardsScreen`)
+### 3. Botones (`ButtonsScreen`) y Tarjetas (`CardsScreen`)
 Catálogo de botones de Material 3 (`ElevatedButton`, `FilledButton`, `OutlinedButton`, `TextButton`, `IconButton` y un botón personalizado con `InkWell`) y tarjetas con distintas configuraciones de elevación, bordes y fotografías cargadas desde red.
 
 | Variantes de Botones | Tarjetas Estilizadas |
@@ -199,7 +210,7 @@ Catálogo de botones de Material 3 (`ElevatedButton`, `FilledButton`, `OutlinedB
 
 ---
 
-### 5. Indicadores de Progreso (`ProgressScreen`) y Snackbars / Diálogos (`SnackbarScreen`)
+### 4. Indicadores de Progreso (`ProgressScreen`) y Snackbars / Diálogos (`SnackbarScreen`)
 Indicadores de progreso indeterminados y controlados en tiempo real mediante `StreamBuilder`, junto con visualización de `SnackBar` y cuadros de diálogo modales (`AlertDialog` y `showAboutDialog`).
 
 | Progress Indicators | Snackbars y Diálogos |
@@ -208,7 +219,7 @@ Indicadores de progreso indeterminados y controlados en tiempo real mediante `St
 
 ---
 
-### 6. Contenedor Animado (`AnimatedScreen`) y Controles de UI (`UiControlsScreen`)
+### 5. Contenedor Animado (`AnimatedScreen`) y Controles de UI (`UiControlsScreen`)
 Transiciones implícitas suaves con `AnimatedContainer` (dimensiones, radio de bordes y color aleatorios usando `Curves.elasticOut`) y controles interactivos de selección (`SwitchListTile`, `ExpansionTile`, `RadioListTile` y `CheckboxListTile`).
 
 | Animated Container | UI Controls + Tiles |
@@ -217,12 +228,12 @@ Transiciones implícitas suaves con `AnimatedContainer` (dimensiones, radio de b
 
 ---
 
-### 7. Tutorial Introductorio (`AppTutorialScreen`), Infinite Scroll (`InfiniteScrollScreen`) y Selector de Tema (`ThemeChangerScreen`)
-Carrusel de bienvenida con `PageView` y animación `FadeInRight`, lista infinita con carga diferida (`FadeInImage`) y `RefreshIndicator`, y pantalla de personalización del tema global (`ThemeChangerScreen`) con retroalimentación inmediata mediante `SnackBar`.
+### 6. Tutorial Introductorio (`AppTutorialScreen`) e Infinite Scroll (`InfiniteScrollScreen`)
+Carrusel de bienvenida con `PageView` y animación `FadeInRight`, y lista infinita con carga diferida (`FadeInImage`) y `RefreshIndicator`.
 
-| Introducción a la Aplicación | InfiniteScroll y Pull to Refresh | Confirmación de Cambio de Tema |
-| :---: | :---: | :---: |
-| <img src="assets/images/10_app_tutorial.png" alt="App Tutorial" width="260"/> | <img src="assets/images/11_infinite_scroll.png" alt="Infinite Scroll" width="260"/> | <img src="assets/images/12_theme_changer_snackbar.png" alt="SnackBar Cambio de Tema" width="260"/> |
+| Introducción a la Aplicación | InfiniteScroll y Pull to Refresh |
+| :---: | :---: |
+| <img src="assets/images/10_app_tutorial.png" alt="App Tutorial" width="280"/> | <img src="assets/images/11_infinite_scroll.png" alt="Infinite Scroll" width="280"/> |
 
 ---
 
