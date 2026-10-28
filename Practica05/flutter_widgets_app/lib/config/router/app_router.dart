@@ -3,8 +3,14 @@ import 'package:flutter_widgets_app/presentation/screens/screens.dart';
 
 // GoRouter configuration
 final appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/splash',
   routes: [
+
+    GoRoute(
+      path: '/splash',
+      name: SplashScreen.name,
+      builder: (context, state) => const SplashScreen(),
+    ),
 
     GoRoute(
       path: '/',
