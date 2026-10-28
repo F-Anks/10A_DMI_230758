@@ -1,18 +1,14 @@
 # Prácticas de la asignatura de Desarrollo Móvil Integral
 
 - **Ingenieria en Desarrollo y Gestión de Software**
-
 - **Docente:** M.T.I Marco A. Ramirez Hernández
- 
 - **Periodo:** Septiembre - Diciembre 2026
-
 - **Alumno:** Francisco Garcia Garcia
-
 - **Matricula:** 230758
 
- ------------------------------------------
+---
 
- ## Descripción
+## Descripción
 
 Este repositorio documenta las prácticas y proyectos realizados para la asignatura de **Desarrollo Móvil Integral**, correspondiente a la carrera de Ingeniería en Desarrollo y Gestión de Software en la UTXJ.
 
@@ -20,19 +16,21 @@ El propósito central de este repositorio es aplicar los principios del desarrol
 
 Dentro del directorio de cada práctica podrás encontrar el código fuente, el objetivo de aprendizaje específico de esa actividad y las evidencias visuales (capturas de pantalla) de la aplicación en funcionamiento.
 
- ------------------------------------------
+---
 
 ## Tabla de Practicas de la Materia
 
-| No. | Nombre                                  | Descripción                                                                 | Potenciador | Estatus       |
-|:---:|:----------------------------------------|:-----------------------------------------------------------------------------|:-----------:|:-------------:|
-| 01  | Metodologia de Evaluacion de la Materia | Revisión de la forma en que se evaluará la materia durante el cuatrimestre. |     05      | Completada    |
-| 02  | [Mi Primer Aplicaccion Movil con Flutter](/Practica02/hello_world/README.md) | App contador con botones para sumar, restar y reiniciar, con colores según el valor. |     25      | Completada    |
-| 03  | [Yes, No App](/Practica03/yes_no_app/README.md) | app de chat en Flutter que responda preguntas del usuario con si o no. |     30     | Completada    |
-| 04  | [TisTos](/Practica04/tistos/README.md)| App de reproducción de videos verticales con Clean Architecture, Providers, 3 DataSources y tematización estacional. |     30      | Completada    |
-| 05 | [Publicación en Appetize.io](/Practica04/tistos/appetize/README.md) | Despliegue en la nube de TisTos, pruebas en emuladores virtuales (Pixel 7 y Pixel Tablet) y validación en Appetize.io. |     -      | Completada    |
-| 06 | [Ver en línea (PDF)](https://docs.google.com/viewer?url=https://raw.githubusercontent.com/F-Anks/10A_DMI_230758/main/Manual/Manual_Instalacion_Flutter_230758.pdf) | Manual de instalacion de examen practico |     -      | Completada    |
-------------------------------------------
+| No. | Nombre                                                                                                                                                                                             | Descripción                                                                                                                                                                                           | Potenciador |  Estatus  |
+| :--: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------: | :--------: |
+|  01  | Metodologia de Evaluacion de la Materia                                                                                                                                                            | Revisión de la forma en que se evaluará la materia durante el cuatrimestre.                                                                                                                          |     05     | Completada |
+|  02  | [Mi Primer Aplicaccion Movil con Flutter](/Practica02/hello_world/README.md)                                                                                                                        | App contador con botones para sumar, restar y reiniciar, con colores según el valor.                                                                                                                  |     25     | Completada |
+|  03  | [Yes, No App](/Practica03/yes_no_app/README.md)                                                                                                                                                     | app de chat en Flutter que responda preguntas del usuario con si o no.                                                                                                                                 |     30     | Completada |
+|  04  | [TisTos](/Practica04/tistos/README.md)                                                                                                                                                              | App de reproducción de videos verticales con Clean Architecture, Providers, 3 DataSources y tematización estacional.                                                                                 |     30     | Completada |
+| 04.1 | [Publicación en Appetize.io](/Practica04/tistos/appetize/README.md)                                                                                                                                | Despliegue en la nube de TisTos, pruebas en emuladores virtuales (Pixel 7 y Pixel Tablet) y validación en Appetize.io.                                                                                |      -      | Completada |
+|  05  | [Manual de instalacion Flutter - Ver en línea (PDF)](https://docs.google.com/viewer?url=https://raw.githubusercontent.com/F-Anks/10A_DMI_230758/main/Manual/Manual_Instalacion_Flutter_230758.pdf) | Manual de instalacion de examen practico                                                                                                                                                               |      -      | Completada |
+|  06  | [Ridgets App (Flutter Widgets App)](/Practica05/flutter_widgets_app/README.md)                                                                                                                      | App Flutter con demostraciones de widgets Material 3, navegación con GoRouter y estado con Riverpod: botones, tarjetas, progreso, controles, animaciones, lista con actualización, contador y temas. |     40     | Completada |
+
+---
 
 ## Tecnologías y Herramientas
 
