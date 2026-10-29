@@ -8,6 +8,9 @@
 - **Periodo:** Septiembre - Diciembre 2026
 - **Valor:** 40 Firmas
 
+[![Appetize.io Demo](https://img.shields.io/badge/Appetize.io-Probar%20en%20el%20Navegador-FF6B6B?style=for-the-badge&logo=android&logoColor=white)](https://appetize.io/app/b_7ip33x5ma5mph63oaezgjeu5oa)
+[![Documentación Appetize](https://img.shields.io/badge/Appetize-Documentación%20de%20Publicación-02569B?style=for-the-badge)](appetize/README.md)
+
 ---
 
 ## Objetivo de la Práctica
@@ -83,6 +86,21 @@ El proyecto consolida los siguientes conceptos clave de desarrollo móvil:
    ```bash
    flutter run
    ```
+
+---
+
+## Demo Interactiva en la Nube (Appetize.io)
+
+La aplicación se encuentra desplegada y disponible para su ejecución interactiva y evaluación en streaming WebRTC mediante **Appetize.io**:
+
+- 🚀 **[Probar Ridgets App en Vivo en Appetize.io](https://appetize.io/app/b_7ip33x5ma5mph63oaezgjeu5oa)**
+- 📱 **[Simulador Directo Google Pixel 7 (Android 13.0)](https://appetize.io/app/b_7ip33x5ma5mph63oaezgjeu5oa?device=pixel7&osVersion=13.0&toolbar=true)**
+- 📟 **[Simulador Directo Google Pixel Tablet (Android 13.0)](https://appetize.io/app/b_7ip33x5ma5mph63oaezgjeu5oa?device=pixeltablet&osVersion=13.0&toolbar=true)**
+- 📖 **[Documentación Completa y Evidencias de Appetize](appetize/README.md)**
+
+| Google Pixel 7 (Smartphone) | Google Pixel Tablet |
+| :---: | :---: |
+| ![Pixel 7 Appetize](appetize/02_appetize_pixel7_running.png) | ![Pixel Tablet Appetize](appetize/04_appetize_pixeltablet_running.png) |
 
 ---
 
@@ -188,3 +206,4 @@ Carrusel de bienvenida con `PageView` y animación `FadeInRight`, y lista infini
 1. **Persistencia Local Robusta con SharedPreferences:** La carga previa de las preferencias en `main()` antes de inflar la jerarquía de widgets garantizó que `SplashScreen` y `MaterialApp` conozcan el estado exacto de color y modo oscuro desde el primer fotograma (fotograma 0), erradicando parpadeos o cambios abruptos de tema en el arranque en frío.
 2. **Conmutación Dinámica de Íconos Nativos sin Interrupción:** Al aprovechar la arquitectura de múltiples `<activity-alias>` en Android junto con la delegación atómica en `onStop()`, se resolvió la limitación del sistema operativo que fuerza el cierre de la aplicación si se desactiva un alias en primer plano. El usuario disfruta de un cambio visual instantáneo dentro de Flutter y un reemplazo limpio en el lanzador del sistema al salir.
 3. **Escalabilidad Visual con Sistema Multi-Splash:** La modularización de las paletas y logos (`logo.jpg` a `logo8.jpg`) dentro de `app_theme.dart` y `splash_screen.dart` demuestra la potencia del diseño declarativo en Flutter, transformando una pantalla de bienvenida estática en un componente dinámico reactivo al estado del usuario.
+
