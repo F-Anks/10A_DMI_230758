@@ -282,6 +282,3 @@ class _CustomSliverAppBar extends StatelessWidget {
     );
   }
 }
-
-
-

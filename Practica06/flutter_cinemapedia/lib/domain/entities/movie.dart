@@ -1,4 +1,3 @@
-
 class Movie {
   final bool adult;
   final String backdropPath;

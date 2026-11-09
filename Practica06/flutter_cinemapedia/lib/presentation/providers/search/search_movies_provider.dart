@@ -40,8 +40,3 @@ class SearchedMoviesNotifier extends StateNotifier<List<Movie>> {
 
 }
 
-
-
-
-
-

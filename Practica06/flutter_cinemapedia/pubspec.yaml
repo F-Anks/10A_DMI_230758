@@ -1,5 +1,5 @@
 name: cinemapedia
-description: "A new Flutter project."
+description: "CinePedia - Aplicación de cine en Flutter."
 publish_to: 'none'
 version: 0.1.0
 
@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   animate_do: ^3.3.4
+  audioplayers: ^6.8.1
   card_swiper: ^3.0.1
   dio: ^5.7.0
   flutter_dotenv: ^5.2.1
@@ -27,3 +28,10 @@ flutter:
 
   assets:
     - .env
+    - assets/images/logo.jpg
+    - assets/images/christmas_logo.jpg
+    - assets/images/cinema_world_day_logo.jpg
+    - assets/images/aniversary_logo.jpg
+    - assets/images/halloween_logo.jpg
+    - assets/images/valentine_logo.jpg
+    - assets/sounds/

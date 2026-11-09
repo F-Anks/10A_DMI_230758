@@ -1,61 +1,38 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:cinemapedia/presentation/screens/screens.dart';
-import 'package:cinemapedia/presentation/views/views.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/', 
+  initialLocation: '/splash',
   routes: [
-  
-  // Bottom Navigation Bar
-  ShellRoute(
-    builder: (BuildContext context, GoRouterState state, Widget child) {
-      return HomeScreen( childView: child );
-    },
-    routes: <RouteBase>[
-      
-      GoRoute(
-        path: '/',
-        builder: (BuildContext context, GoRouterState state) {
-          return const HomeView();
-        },
-        routes: [
-          GoRoute(
-            path: 'movie/:id',
-            name: MovieScreen.name,
-            builder: (context, state) {
-              final movieId = state.pathParameters['id'] ?? 'no-id';
+    GoRoute(
+      path: '/splash',
+      name: SplashScreen.name,
+      builder: (context, state) => const SplashScreen(),
+    ),
+    GoRoute(
+      path: '/home/:page',
+      name: HomeScreen.name,
+      builder: (context, state) {
+        final pageIndex = int.parse(state.pathParameters['page'] ?? '0');
 
-              return MovieScreen(movieId: movieId);
-            },
-          ),
-        ],
-      ),
+        return HomeScreen(pageIndex: pageIndex);
+      },
+      routes: [
+        GoRoute(
+          path: 'movie/:id',
+          name: MovieScreen.name,
+          builder: (context, state) {
+            final movieId = state.pathParameters['id'] ?? 'no-id';
 
-      GoRoute(
-        path: '/favorites',
-        builder: (BuildContext context, GoRouterState state) {
-          return const FavoritesView();
-        },
-      ),
-    ],
-  ),
-
-
-  // GoRoute(
-  //     path: '/',
-  //     name: HomeScreen.name,
-  //     builder: (context, state) => const HomeScreen(),
-  //     routes: [
-  //       GoRoute(
-  //         path: 'movie/:id',
-  //         name: MovieScreen.name,
-  //         builder: (context, state) {
-  //           final movieId = state.params['id'] ?? 'no-id';
-
-  //           return MovieScreen(movieId: movieId);
-  //         },
-  //       ),
-  //     ]),
-]);
+            return MovieScreen(movieId: movieId);
+          },
+        ),
+      ],
+    ),
+    GoRoute(
+      path: '/',
+      redirect: (_, __) => '/home/0',
+    ),
+  ],
+);
