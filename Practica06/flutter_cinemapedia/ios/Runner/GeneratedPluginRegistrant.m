@@ -12,10 +12,17 @@
 @import audioplayers_darwin;
 #endif
 
+#if __has_include(<isar_flutter_libs/IsarFlutterLibsPlugin.h>)
+#import <isar_flutter_libs/IsarFlutterLibsPlugin.h>
+#else
+@import isar_flutter_libs;
+#endif
+
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [AudioplayersDarwinPlugin registerWithRegistrar:[registry registrarForPlugin:@"AudioplayersDarwinPlugin"]];
+  [IsarFlutterLibsPlugin registerWithRegistrar:[registry registrarForPlugin:@"IsarFlutterLibsPlugin"]];
 }
 
 @end
