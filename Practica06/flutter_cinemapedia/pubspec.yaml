@@ -21,6 +21,7 @@ dependencies:
   isar: 3.1.0+1
   isar_flutter_libs: 3.1.0+1
   path_provider: ^2.1.2
+  youtube_player_flutter: ^10.0.1
 
 dev_dependencies:
   flutter_test:
@@ -40,4 +41,5 @@ flutter:
     - assets/images/aniversary_logo.jpg
     - assets/images/halloween_logo.jpg
     - assets/images/valentine_logo.jpg
+    - assets/loaders/
     - assets/sounds/
