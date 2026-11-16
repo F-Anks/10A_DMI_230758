@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:cinemapedia/config/helpers/human_formats.dart';
+import 'package:cinemapedia/config/i18n/app_strings.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:cinemapedia/presentation/widgets/widgets.dart';
 
@@ -46,6 +48,13 @@ class HomeViewState extends ConsumerState<HomeView>
   Widget build(BuildContext context) {
     super.build(context);
 
+    ref.listen(languageProvider, (previous, next) {
+      if (previous == next) return;
+      Future.microtask(() {
+        if (mounted) _loadFirstPages();
+      });
+    });
+
     ref.listen(catalogTypeProvider, (previous, next) {
       if (previous == next) return;
       Future.microtask(() {
@@ -53,6 +62,8 @@ class HomeViewState extends ConsumerState<HomeView>
       });
     });
 
+    final t = AppStrings.of(context);
+    final languageCode = Localizations.localeOf(context).languageCode;
     final isSeries = ref.watch(catalogTypeProvider) == CatalogType.series;
 
     final initialLoading = ref.watch(initialLoadingProvider);
@@ -90,24 +101,24 @@ class HomeViewState extends ConsumerState<HomeView>
                   MovieHorizontalListview(
                     key: ValueKey('first-$isSeries'),
                     movies: firstMovies,
-                    title: isSeries ? 'En emisión' : 'En cines',
-                    subTitle: 'Hoy',
+                    title: isSeries ? t.seriesOnAir : t.nowPlaying,
+                    subTitle: HumanFormats.today(languageCode),
                     loadNextPage: () =>
                         ref.read(firstProvider.notifier).loadNextPage(),
                   ),
                   MovieHorizontalListview(
                     key: ValueKey('second-$isSeries'),
                     movies: secondMovies,
-                    title: isSeries ? 'Se emiten hoy' : 'Próximamente',
-                    subTitle: isSeries ? 'Episodios nuevos' : 'En este mes',
+                    title: isSeries ? t.airingToday : t.upcoming,
+                    subTitle: isSeries ? t.airingTodaySub : t.upcomingSub,
                     loadNextPage: () =>
                         ref.read(secondProvider.notifier).loadNextPage(),
                   ),
                   MovieHorizontalListview(
                     key: ValueKey('third-$isSeries'),
                     movies: thirdMovies,
-                    title: 'Mejor calificadas',
-                    subTitle: 'Desde siempre',
+                    title: t.topRated,
+                    subTitle: t.topRatedSub,
                     loadNextPage: () =>
                         ref.read(thirdProvider.notifier).loadNextPage(),
                   ),

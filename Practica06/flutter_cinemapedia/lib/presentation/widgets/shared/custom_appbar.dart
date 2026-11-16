@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:cinemapedia/config/i18n/app_strings.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/presentation/delegates/search_movie_delegate.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
@@ -11,6 +12,7 @@ class CustomAppbar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = AppStrings.of(context);
     final colors = Theme.of(context).colorScheme;
     final titleStyle = Theme.of(context).textTheme.titleMedium;
     final isSeries = ref.watch(catalogTypeProvider) == CatalogType.series;
@@ -39,8 +41,7 @@ class CustomAppbar extends ConsumerWidget {
                     query: searchQuery,
                     context: context,
                     delegate: SearchMovieDelegate(
-                      searchLabel:
-                          isSeries ? 'Buscar series' : 'Buscar películas',
+                      searchLabel: isSeries ? t.searchSeries : t.searchMovies,
                       initialMovies: searchedMovies,
                       searchMovies: ref
                           .read(searchedMoviesProvider.notifier)

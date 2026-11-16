@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:cinemapedia/config/i18n/app_strings.dart';
+
 class CustomBottomNavigation extends StatelessWidget {
   final int currentIndex;
 
@@ -25,6 +27,7 @@ class CustomBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppStrings.of(context);
     final colors = Theme.of(context).colorScheme;
 
     return BottomNavigationBar(
@@ -32,18 +35,18 @@ class CustomBottomNavigation extends StatelessWidget {
       onTap: (value) => onItemTapped(context, value),
       elevation: 0,
       selectedItemColor: colors.primary,
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home_max),
-          label: 'Inicio',
+          icon: const Icon(Icons.home_max),
+          label: t.home,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.thumbs_up_down_outlined),
-          label: 'Populares',
+          icon: const Icon(Icons.thumbs_up_down_outlined),
+          label: t.popular,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.favorite_outline),
-          label: 'Favoritos',
+          icon: const Icon(Icons.favorite_outline),
+          label: t.favorites,
         ),
       ],
     );

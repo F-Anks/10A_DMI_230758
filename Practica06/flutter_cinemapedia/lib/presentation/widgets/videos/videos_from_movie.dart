@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import 'package:cinemapedia/config/i18n/app_strings.dart';
 import 'package:cinemapedia/domain/entities/entities.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
 
@@ -18,12 +19,12 @@ class VideosFromMovie extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = AppStrings.of(context);
     final moviesFromVideo = ref.watch(videosFromMovieProvider(movieId));
 
     return moviesFromVideo.when(
-      data: (videos) => _VideosList(videos: videos),
-      error: (_, __) =>
-          const Center(child: Text('No se pudo cargar los videos')),
+      data: (videos) => _VideosList(videos: videos, title: t.videos),
+      error: (_, __) => Center(child: Text(t.videosError)),
       loading: () =>
           const Center(child: CircularProgressIndicator(strokeWidth: 2)),
     );
@@ -32,12 +33,15 @@ class VideosFromMovie extends ConsumerWidget {
 
 class _VideosList extends StatelessWidget {
   final List<Video> videos;
+  final String title;
 
-  const _VideosList({required this.videos});
+  const _VideosList({
+    required this.videos,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
-    //* Nada que mostrar
     if (videos.isEmpty) {
       return const SizedBox();
     }
@@ -45,15 +49,13 @@ class _VideosList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(
-            'Videos',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            title,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
-
-        //* Aunque tengo varios videos, sólo quiero mostrar el primero
         _YouTubeVideoPlayer(
           youtubeId: videos.first.youtubeKey,
           name: videos.first.name,

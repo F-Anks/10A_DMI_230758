@@ -1,42 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:cinemapedia/config/i18n/app_strings.dart';
+import 'package:cinemapedia/presentation/providers/providers.dart';
 
-class FullScreenLoader extends StatelessWidget {
+class FullScreenLoader extends ConsumerWidget {
   const FullScreenLoader({super.key});
-  
-  Stream<String> getLoadingMessages() {
-    final messages = <String>[
-      'Cargando películas',
-      'Comprando palomitas de maíz',
-      'Cargando populares',
-      'Llamando a mi novia',
-      'Ya mero...',
-      'Esto está tardando más de lo esperado :(',
-    ];
 
-    return Stream.periodic( const Duration(milliseconds: 1200), (step) {
+  Stream<String> getLoadingMessages(List<String> messages) {
+    return Stream.periodic(const Duration(milliseconds: 1200), (step) {
       return messages[step];
     }).take(messages.length);
   }
 
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = AppStrings.of(context);
+    final isSeries = ref.watch(catalogTypeProvider) == CatalogType.series;
+    final messages =
+        isSeries ? t.loaderMessagesSeries : t.loaderMessagesMovies;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('Espere por favor'),
+          Text(t.pleaseWait),
           const SizedBox(height: 10),
           const CircularProgressIndicator(strokeWidth: 2),
           const SizedBox(height: 10),
-
           StreamBuilder(
-            stream: getLoadingMessages(),
+            stream: getLoadingMessages(messages),
             builder: (context, snapshot) {
-              if ( !snapshot.hasData ) return const Text('Cargando...');
-              
-              return Text( snapshot.data! );
+              if (!snapshot.hasData) return Text(t.loading);
+
+              return Text(snapshot.data!);
             },
           ),
         ],

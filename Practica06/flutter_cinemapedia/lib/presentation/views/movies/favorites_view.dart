@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:cinemapedia/config/helpers/media_id.dart';
+import 'package:cinemapedia/config/i18n/app_strings.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:cinemapedia/presentation/widgets/widgets.dart';
 
@@ -41,6 +42,7 @@ class FavoritesViewState extends ConsumerState<FavoritesView>
   Widget build(BuildContext context) {
     super.build(context);
 
+    final t = AppStrings.of(context);
     final isSeries = ref.watch(catalogTypeProvider) == CatalogType.series;
     final favoriteMovies = ref
         .watch(favoriteMoviesProvider)
@@ -63,19 +65,17 @@ class FavoritesViewState extends ConsumerState<FavoritesView>
           children: [
             Icon(Icons.favorite_outline_sharp, size: 60, color: colors.primary),
             Text(
-              'Ohhh no!!',
+              t.favoritesEmptyTitle,
               style: TextStyle(fontSize: 30, color: colors.primary),
             ),
             Text(
-              isSeries
-                  ? 'No tienes series favoritas'
-                  : 'No tienes películas favoritas',
+              isSeries ? t.favoritesEmptySeries : t.favoritesEmptyMovies,
               style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 20),
             FilledButton.tonal(
               onPressed: () => context.go('/home/0'),
-              child: const Text('Empieza a buscar'),
+              child: Text(t.startSearching),
             ),
           ],
         ),

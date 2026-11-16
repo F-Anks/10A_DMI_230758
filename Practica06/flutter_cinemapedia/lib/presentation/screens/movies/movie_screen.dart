@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:cinemapedia/config/helpers/human_formats.dart';
+import 'package:cinemapedia/config/i18n/app_strings.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:cinemapedia/presentation/widgets/widgets.dart';
@@ -137,6 +138,9 @@ class _TitleAndOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppStrings.of(context);
+    final languageCode = Localizations.localeOf(context).languageCode;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
       child: Row(
@@ -165,12 +169,19 @@ class _TitleAndOverview extends StatelessWidget {
                 MovieRating(voteAverage: movie.voteAverage),
                 Row(
                   children: [
-                    const Text(
-                      'Estreno:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Text(
+                      t.releaseDate,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(width: 5),
-                    Text(HumanFormats.shortDate(movie.releaseDate)),
+                    Flexible(
+                      child: Text(
+                        HumanFormats.shortDate(
+                          movie.releaseDate,
+                          languageCode,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],
