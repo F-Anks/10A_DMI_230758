@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import 'package:cinemapedia/config/constants/environment.dart';
+import 'package:cinemapedia/config/helpers/age_rating.dart';
 import 'package:cinemapedia/config/helpers/media_id.dart';
 import 'package:cinemapedia/domain/datasources/movies_datasource.dart';
 import 'package:cinemapedia/domain/entities/entities.dart';
@@ -40,6 +41,11 @@ class MoviedbDatasource extends MoviesDatasource {
   }
 
   String get _languageCode => language.split('-').first;
+
+  String get _countryCode {
+    final parts = language.split('-');
+    return parts.length > 1 ? parts[1].toUpperCase() : 'US';
+  }
 
   bool _needsTitleFallback(Movie item) =>
       item.title == item.originalTitle &&
@@ -298,5 +304,68 @@ class MoviedbDatasource extends MoviesDatasource {
 
     return _withEnglishFallback(_jsonToSeries(response.data), path,
         params: params, isSeries: true);
+  }
+
+  @override
+  Future<String> getCertification(int movieId) async {
+    final tmdbId = MediaId.tmdbId(movieId);
+    final isSeries = MediaId.isSeries(movieId);
+
+    try {
+      if (isSeries) {
+        final response = await dio.get('/tv/$tmdbId/content_ratings');
+        final results =
+            (response.data['results'] as List<dynamic>?) ?? const [];
+        final byCountry = <String, String>{};
+        for (final entry in results) {
+          if (entry is! Map<String, dynamic>) continue;
+          final iso = (entry['iso_3166_1'] ?? '').toString().toUpperCase();
+          final rating = (entry['rating'] ?? '').toString().trim();
+          if (iso.isNotEmpty && rating.isNotEmpty) {
+            byCountry[iso] = rating;
+          }
+        }
+        return AgeRatings.resolveForCountry(
+          countryCode: _countryCode,
+          byCountry: byCountry,
+        );
+      }
+
+      final response = await dio.get('/movie/$tmdbId/release_dates');
+      final results = (response.data['results'] as List<dynamic>?) ?? const [];
+      final byCountry = <String, String>{};
+
+      for (final entry in results) {
+        if (entry is! Map<String, dynamic>) continue;
+        final iso = (entry['iso_3166_1'] ?? '').toString().toUpperCase();
+        final releases =
+            (entry['release_dates'] as List<dynamic>?) ?? const [];
+
+        String bestCert = '';
+        for (final rel in releases) {
+          if (rel is! Map<String, dynamic>) continue;
+          final cert = (rel['certification'] ?? '').toString().trim();
+          if (cert.isEmpty) continue;
+          if (rel['type'] == 3) {
+            bestCert = cert;
+            break;
+          }
+          if (bestCert.isEmpty) {
+            bestCert = cert;
+          }
+        }
+
+        if (iso.isNotEmpty && bestCert.isNotEmpty) {
+          byCountry[iso] = bestCert;
+        }
+      }
+
+      return AgeRatings.resolveForCountry(
+        countryCode: _countryCode,
+        byCountry: byCountry,
+      );
+    } catch (_) {
+      return 'NR';
+    }
   }
 }

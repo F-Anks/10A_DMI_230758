@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:cinemapedia/config/helpers/age_rating.dart';
 import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:cinemapedia/config/i18n/app_strings.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
@@ -125,7 +126,7 @@ class _Genres extends StatelessWidget {
   }
 }
 
-class _TitleAndOverview extends StatelessWidget {
+class _TitleAndOverview extends ConsumerWidget {
   const _TitleAndOverview({
     required this.movie,
     required this.size,
@@ -137,9 +138,11 @@ class _TitleAndOverview extends StatelessWidget {
   final TextTheme textStyles;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = AppStrings.of(context);
     final languageCode = Localizations.localeOf(context).languageCode;
+    final countryCode = ref.watch(languageProvider).country;
+    final certificationAsync = ref.watch(movieCertificationProvider(movie.id));
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
@@ -184,10 +187,105 @@ class _TitleAndOverview extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 6),
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 6,
+                  runSpacing: 4,
+                  children: [
+                    Text(
+                      t.ageRating,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    certificationAsync.when(
+                      data: (certification) => _AgeRatingBadge(
+                        countryCode: countryCode,
+                        certification: certification,
+                      ),
+                      loading: () => const _AgeRatingBadgePlaceholder(),
+                      error: (_, __) => _AgeRatingBadge(
+                        countryCode: countryCode,
+                        certification: 'NR',
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _AgeRatingBadge extends StatelessWidget {
+  final String countryCode;
+  final String certification;
+
+  const _AgeRatingBadge({
+    required this.countryCode,
+    required this.certification,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final level = AgeRatings.classify(certification);
+
+    final Color accent = switch (level) {
+      AgeRatingLevel.allAges => Colors.teal.shade300,
+      AgeRatingLevel.teen => Colors.amber.shade300,
+      AgeRatingLevel.mature => Colors.orange.shade300,
+      AgeRatingLevel.adult => colors.error,
+      AgeRatingLevel.unrated => colors.onSurfaceVariant,
+    };
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: accent.withValues(alpha: 0.55)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            countryCode,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: colors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(width: 5),
+          Text(
+            certification,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: accent,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AgeRatingBadgePlaceholder extends StatelessWidget {
+  const _AgeRatingBadgePlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      width: 56,
+      height: 22,
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(8),
       ),
     );
   }

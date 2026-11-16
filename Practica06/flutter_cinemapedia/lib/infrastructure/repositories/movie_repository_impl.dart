@@ -47,6 +47,11 @@ class MovieRepositoryImpl extends MoviesRepository {
   }
 
   @override
+  Future<String> getCertification(int movieId) {
+    return datasource.getCertification(movieId);
+  }
+
+  @override
   Future<List<Movie>> getOnTheAirSeries({int page = 1}) {
     return datasource.getOnTheAirSeries(page: page);
   }

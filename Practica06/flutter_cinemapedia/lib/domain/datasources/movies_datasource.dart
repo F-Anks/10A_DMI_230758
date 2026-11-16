@@ -17,6 +17,8 @@ abstract class MoviesDatasource {
 
   Future<List<Video>> getYoutubeVideosById(int movieId);
 
+  Future<String> getCertification(int movieId);
+
   // Series
   Future<List<Movie>> getOnTheAirSeries({int page = 1});
 
