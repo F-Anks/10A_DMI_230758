@@ -16,24 +16,61 @@ class HomeViewState extends ConsumerState<HomeView>
   @override
   void initState() {
     super.initState();
+    _loadFirstPages();
+  }
 
-    ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
-    ref.read(popularMoviesProvider.notifier).loadNextPage();
-    ref.read(topRatedMoviesProvider.notifier).loadNextPage();
-    ref.read(upcomingMoviesProvider.notifier).loadNextPage();
+  void _loadFirstPages() {
+    final isSeries = ref.read(catalogTypeProvider) == CatalogType.series;
+    final providers = isSeries
+        ? [
+            onTheAirSeriesProvider,
+            airingTodaySeriesProvider,
+            popularSeriesProvider,
+            topRatedSeriesProvider,
+          ]
+        : [
+            nowPlayingMoviesProvider,
+            upcomingMoviesProvider,
+            popularMoviesProvider,
+            topRatedMoviesProvider,
+          ];
+
+    for (final provider in providers) {
+      if (ref.read(provider).isEmpty) {
+        ref.read(provider.notifier).loadNextPage();
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
 
+    ref.listen(catalogTypeProvider, (previous, next) {
+      if (previous == next) return;
+      Future.microtask(() {
+        if (mounted) _loadFirstPages();
+      });
+    });
+
+    final isSeries = ref.watch(catalogTypeProvider) == CatalogType.series;
+
     final initialLoading = ref.watch(initialLoadingProvider);
     if (initialLoading) return const FullScreenLoader();
 
-    final slideShowMovies = ref.watch(moviesSlideshowProvider);
-    final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
-    final topRatedMovies = ref.watch(topRatedMoviesProvider);
-    final upcomingMovies = ref.watch(upcomingMoviesProvider);
+    final firstProvider =
+        isSeries ? onTheAirSeriesProvider : nowPlayingMoviesProvider;
+    final secondProvider =
+        isSeries ? airingTodaySeriesProvider : upcomingMoviesProvider;
+    final thirdProvider =
+        isSeries ? topRatedSeriesProvider : topRatedMoviesProvider;
+
+    final slideShowMovies = ref.watch(
+      isSeries ? seriesSlideshowProvider : moviesSlideshowProvider,
+    );
+    final firstMovies = ref.watch(firstProvider);
+    final secondMovies = ref.watch(secondProvider);
+    final thirdMovies = ref.watch(thirdProvider);
 
     return CustomScrollView(
       slivers: [
@@ -46,39 +83,33 @@ class HomeViewState extends ConsumerState<HomeView>
             (context, index) {
               return Column(
                 children: [
-                  MoviesSlideshow(movies: slideShowMovies),
-                  MovieHorizontalListview(
-                    movies: nowPlayingMovies,
-                    title: 'En cines',
-                    subTitle: 'Lunes 20',
-                    loadNextPage: () => ref
-                        .read(nowPlayingMoviesProvider.notifier)
-                        .loadNextPage(),
+                  MoviesSlideshow(
+                    key: ValueKey('slideshow-$isSeries'),
+                    movies: slideShowMovies,
                   ),
                   MovieHorizontalListview(
-                    movies: upcomingMovies,
-                    title: 'Próximamente',
-                    subTitle: 'En este mes',
-                    loadNextPage: () => ref
-                        .read(upcomingMoviesProvider.notifier)
-                        .loadNextPage(),
+                    key: ValueKey('first-$isSeries'),
+                    movies: firstMovies,
+                    title: isSeries ? 'En emisión' : 'En cines',
+                    subTitle: 'Hoy',
+                    loadNextPage: () =>
+                        ref.read(firstProvider.notifier).loadNextPage(),
                   ),
-
-                  //* Ya no estará aquí, ahora es parte del menú inferior
-                  // MovieHorizontalListview(
-                  //   movies: popularMovies,
-                  //   title: 'Populares',
-                  //   loadNextPage: () => ref
-                  //       .read(popularMoviesProvider.notifier)
-                  //       .loadNextPage(),
-                  // ),
                   MovieHorizontalListview(
-                    movies: topRatedMovies,
+                    key: ValueKey('second-$isSeries'),
+                    movies: secondMovies,
+                    title: isSeries ? 'Se emiten hoy' : 'Próximamente',
+                    subTitle: isSeries ? 'Episodios nuevos' : 'En este mes',
+                    loadNextPage: () =>
+                        ref.read(secondProvider.notifier).loadNextPage(),
+                  ),
+                  MovieHorizontalListview(
+                    key: ValueKey('third-$isSeries'),
+                    movies: thirdMovies,
                     title: 'Mejor calificadas',
                     subTitle: 'Desde siempre',
-                    loadNextPage: () => ref
-                        .read(topRatedMoviesProvider.notifier)
-                        .loadNextPage(),
+                    loadNextPage: () =>
+                        ref.read(thirdProvider.notifier).loadNextPage(),
                   ),
                   const SizedBox(height: 10),
                 ],

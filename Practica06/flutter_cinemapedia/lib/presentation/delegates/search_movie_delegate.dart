@@ -23,10 +23,10 @@ class SearchMovieDelegate extends SearchDelegate<Movie?>{
   SearchMovieDelegate({
     required this.searchMovies,
     required this.initialMovies,
-  }):super(
-    searchFieldLabel: 'Buscar películas',
-    // textInputAction: TextInputAction.done
-  );
+    String searchLabel = 'Buscar películas',
+  }) : super(
+          searchFieldLabel: searchLabel,
+        );
 
   void clearStreams() {
     debouncedMovies.close();

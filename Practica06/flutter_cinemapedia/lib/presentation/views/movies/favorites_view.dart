@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:cinemapedia/config/helpers/media_id.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:cinemapedia/presentation/widgets/widgets.dart';
 
@@ -40,7 +41,18 @@ class FavoritesViewState extends ConsumerState<FavoritesView>
   Widget build(BuildContext context) {
     super.build(context);
 
-    final favoriteMovies = ref.watch(favoriteMoviesProvider).values.toList();
+    final isSeries = ref.watch(catalogTypeProvider) == CatalogType.series;
+    final favoriteMovies = ref
+        .watch(favoriteMoviesProvider)
+        .values
+        .where((m) => isSeries ? MediaId.isSeries(m.id) : !MediaId.isSeries(m.id))
+        .toList();
+
+    if (favoriteMovies.isEmpty && !isLastPage && !isLoading) {
+      Future.microtask(() {
+        if (mounted) loadNextPage();
+      });
+    }
 
     if (favoriteMovies.isEmpty) {
       final colors = Theme.of(context).colorScheme;
@@ -54,9 +66,11 @@ class FavoritesViewState extends ConsumerState<FavoritesView>
               'Ohhh no!!',
               style: TextStyle(fontSize: 30, color: colors.primary),
             ),
-            const Text(
-              'No tienes películas favoritas',
-              style: TextStyle(fontSize: 20),
+            Text(
+              isSeries
+                  ? 'No tienes series favoritas'
+                  : 'No tienes películas favoritas',
+              style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 20),
             FilledButton.tonal(
@@ -70,6 +84,7 @@ class FavoritesViewState extends ConsumerState<FavoritesView>
 
     return Scaffold(
       body: MovieMasonry(
+        key: ValueKey('favorites-$isSeries'),
         loadNextPage: loadNextPage,
         movies: favoriteMovies,
       ),

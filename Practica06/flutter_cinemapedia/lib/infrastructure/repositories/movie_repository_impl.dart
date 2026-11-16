@@ -45,4 +45,29 @@ class MovieRepositoryImpl extends MoviesRepository {
   Future<List<Video>> getYoutubeVideosById(int movieId) {
     return datasource.getYoutubeVideosById(movieId);
   }
+
+  @override
+  Future<List<Movie>> getOnTheAirSeries({int page = 1}) {
+    return datasource.getOnTheAirSeries(page: page);
+  }
+
+  @override
+  Future<List<Movie>> getAiringTodaySeries({int page = 1}) {
+    return datasource.getAiringTodaySeries(page: page);
+  }
+
+  @override
+  Future<List<Movie>> getPopularSeries({int page = 1}) {
+    return datasource.getPopularSeries(page: page);
+  }
+
+  @override
+  Future<List<Movie>> getTopRatedSeries({int page = 1}) {
+    return datasource.getTopRatedSeries(page: page);
+  }
+
+  @override
+  Future<List<Movie>> searchSeries(String query) {
+    return datasource.searchSeries(query);
+  }
 }

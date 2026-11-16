@@ -17,7 +17,9 @@ class PopularViewState extends ConsumerState<PopularView>
   Widget build(BuildContext context) {
     super.build(context);
 
-    final popularMovies = ref.watch(popularMoviesProvider);
+    final isSeries = ref.watch(catalogTypeProvider) == CatalogType.series;
+    final provider = isSeries ? popularSeriesProvider : popularMoviesProvider;
+    final popularMovies = ref.watch(provider);
 
     if (popularMovies.isEmpty) {
       return const Center(child: CircularProgressIndicator(strokeWidth: 2));
@@ -25,8 +27,8 @@ class PopularViewState extends ConsumerState<PopularView>
 
     return Scaffold(
       body: MovieMasonry(
-        loadNextPage: () =>
-            ref.read(popularMoviesProvider.notifier).loadNextPage(),
+        key: ValueKey('popular-$isSeries'),
+        loadNextPage: () => ref.read(provider.notifier).loadNextPage(),
         movies: popularMovies,
       ),
     );

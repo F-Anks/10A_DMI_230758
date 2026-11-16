@@ -9,5 +9,9 @@ export 'movies/movie_info_provider.dart';
 
 export 'search/search_movies_provider.dart';
 
+export 'series/series_providers.dart';
+
+export 'settings/catalog_type_provider.dart';
+
 export 'storage/local_storage_provider.dart';
 export 'storage/favorite_movies_provider.dart';
