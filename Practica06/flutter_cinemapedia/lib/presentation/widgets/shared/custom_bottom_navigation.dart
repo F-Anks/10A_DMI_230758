@@ -1,65 +1,147 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:cinemapedia/config/i18n/app_strings.dart';
 
 class CustomBottomNavigation extends StatelessWidget {
-  const CustomBottomNavigation({super.key});
+  final int currentIndex;
 
-  int getCurrentIndex( BuildContext context ) {
-    final String location = GoRouterState.of(context).matchedLocation;
+  const CustomBottomNavigation({
+    super.key,
+    required this.currentIndex,
+  });
 
-    switch (location) {
-      case '/':
-        return 0;
-
-      case '/categories':
-        return 1;
-
-      case '/favorites':
-        return 2;
-
-      default:
-        return 0;
-    }
-  }
-
-   void onItemTapped(BuildContext context, int index) {
+  void onItemTapped(BuildContext context, int index) {
     switch (index) {
       case 0:
-        context.go('/');
+        context.go('/home/0');
         break;
       case 1:
-        context.go('/categories');
+        context.go('/home/1');
         break;
       case 2:
-        context.go('/favorites');
+        context.go('/home/2');
         break;
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
+    final t = AppStrings.of(context);
+    final colors = Theme.of(context).colorScheme;
 
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border(
+          top: BorderSide(
+            color: colors.outlineVariant.withValues(alpha: 0.45),
+          ),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: _NavBarItem(
+                  icon: Icons.movie_filter_outlined,
+                  activeIcon: Icons.movie_filter_rounded,
+                  label: t.home,
+                  selected: currentIndex == 0,
+                  onTap: () => onItemTapped(context, 0),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _NavBarItem(
+                  icon: Icons.local_fire_department_outlined,
+                  activeIcon: Icons.local_fire_department_rounded,
+                  label: t.popular,
+                  selected: currentIndex == 1,
+                  onTap: () => onItemTapped(context, 1),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _NavBarItem(
+                  icon: Icons.bookmark_border_rounded,
+                  activeIcon: Icons.bookmark_rounded,
+                  label: t.favorites,
+                  selected: currentIndex == 2,
+                  onTap: () => onItemTapped(context, 2),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-    return BottomNavigationBar(
-      elevation: 0,
-      currentIndex: getCurrentIndex(context),
-      onTap: (index) => onItemTapped(context, index),
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon( Icons.home_max ),
-          label: 'Inicio'
+class _NavBarItem extends StatelessWidget {
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _NavBarItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+        decoration: BoxDecoration(
+          color: selected
+              ? colors.primary.withValues(alpha: 0.15)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: selected
+                ? colors.primary.withValues(alpha: 0.5)
+                : Colors.transparent,
+          ),
         ),
-        BottomNavigationBarItem(
-          icon: Icon( Icons.label_outline ),
-          label: 'Categorías'
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              selected ? activeIcon : icon,
+              size: 20,
+              color: selected ? colors.primary : colors.onSurfaceVariant,
+            ),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+                  color: selected ? colors.primary : colors.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ],
         ),
-        BottomNavigationBarItem(
-          icon: Icon( Icons.favorite_outline ),
-          label: 'Favoritos'
-        ),
-      ]
+      ),
     );
   }
 }
