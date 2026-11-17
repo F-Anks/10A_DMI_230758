@@ -16,7 +16,6 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-//* Este Mixin es necesario para mantener el estado en el PageView
 class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin {
   late PageController pageController;
@@ -58,7 +57,6 @@ class _HomeScreenState extends State<HomeScreen>
     return Scaffold(
       drawer: const SideMenu(),
       body: PageView(
-        //* Esto evitará que rebote
         physics: const NeverScrollableScrollPhysics(),
         controller: pageController,
         children: viewRoutes,

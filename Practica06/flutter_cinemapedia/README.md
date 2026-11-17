@@ -143,6 +143,66 @@ La aplicación se encuentra compilada en modo producción (`app-release.apk`) y 
 
 ---
 
+## Evidencias Visuales de la Aplicación y Cambios Extra Implementados
+
+### 1. Splash Screen Estacional, Carrusel Mejorado (Estrellas + Rate + Flechas) y Menú Lateral Rediseñado
+Arranque con `SplashScreen` animado, pantalla principal con carrusel mejorado (insignia superior con 5 estrellas + rate numérico, flechas laterales de navegación circular, título y sinopsis) y nuevo `SideMenu` con tarjetas de Contenido, Tema de Interfaz e Idioma.
+
+| Splash Screen Estacional | Inicio: Carrusel (Estrellas + Rate + Flechas) | Menú Lateral Rediseñado (`SideMenu`) |
+| :---: | :---: | :---: |
+| <img src="assets/screenshots/01_splash_screen.png" alt="Splash Screen" width="250"/> | <img src="assets/screenshots/02_home_movies_carousel.png" alt="Home Movies Carousel" width="250"/> | <img src="assets/screenshots/03_side_menu_config.png" alt="Side Menu Config" width="250"/> |
+
+---
+
+### 2. Catálogo Dual (Series de TV), Clasificación de Edad por País y Reproductor de Tráiler YouTube
+Conmutación completa al catálogo de **Series de TV** (`En emisión` y `Se emiten hoy`), vista de detalle con insignia de **Clasificación de edad según el país** (`MX · B`), reparto de actores, reproductor de **YouTube** integrado y recomendaciones similares.
+
+| Catálogo de Series (`En emisión`) | Detalle con Clasificación de Edad (`MX · B`) | Tráiler de YouTube y Recomendaciones |
+| :---: | :---: | :---: |
+| <img src="assets/screenshots/04_home_series_catalog.png" alt="Series Catalog" width="250"/> | <img src="assets/screenshots/05_movie_detail_age_rating.png" alt="Age Rating Detail" width="250"/> | <img src="assets/screenshots/06_movie_detail_trailer_similar.png" alt="Trailer and Similar" width="250"/> |
+
+---
+
+### 3. Selector de Tema de Interfaz (Modo Claro / Oscuro + Paletas por Temporada)
+Demostración del cambio en vivo a **Modo Claro** combinado con el tema de temporada **Navidad** tanto en el menú lateral como en la pantalla principal y barra inferior rediseñada.
+
+| Menú Lateral — Modo Claro (Tema Navidad) | Pantalla Principal — Modo Claro (Tema Navidad) |
+| :---: | :---: |
+| <img src="assets/screenshots/07_side_menu_light_theme.png" alt="Side Menu Light Theme" width="270"/> | <img src="assets/screenshots/08_home_light_theme.png" alt="Home Light Theme" width="270"/> |
+
+---
+
+### 4. Soporte Multilenguaje (5 Idiomas), Respaldo en Inglés y Dirección LTR en Árabe
+Cambio de idioma de la interfaz y del catálogo TMDB en **Alemán (`DE`)** con tema Aniversario y en **Árabe (`EG`)** manteniendo la dirección `TextDirection.ltr` sin invertir la estructura de la pantalla y aplicando respaldo en inglés (`Other Mommy`) cuando un título no cuenta con traducción local.
+
+| Alemán (`DE`) + Tema Aniversario | Árabe (`EG`) con Respaldo `en-US` y LTR Fijo |
+| :---: | :---: |
+| <img src="assets/screenshots/09_language_german.png" alt="German Language" width="270"/> | <img src="assets/screenshots/10_language_arabic_ltr.png" alt="Arabic Language LTR" width="270"/> |
+
+---
+
+### 5. Cuadrícula Masonry de Populares y Favoritos Persistidos en Isar
+Vista `PopularView` en cuadrícula *Masonry* de 3 columnas con scroll infinito y vista `FavoritesView` mostrando las películas almacenadas localmente en **Isar**.
+
+| Populares (Cuadrícula Masonry) | Favoritos Guardados en Isar |
+| :---: | :---: |
+| <img src="assets/screenshots/11_popular_masonry.png" alt="Popular Masonry" width="270"/> | <img src="assets/screenshots/12_favorites_isar.png" alt="Favorites Isar" width="270"/> |
+
+---
+
+### 6. Galería de Logotipos e Íconos Estacionales (`LogoHelper` y `DynamicIconHelper`)
+Cada temporada cuenta con su propio logotipo e ícono nativo de Android configurado mediante `<activity-alias>`:
+
+| Normal (`logo.jpg`) | Navidad (`christmas_logo.jpg`) | Día Mundial del Cine (`cinema_world_day_logo.jpg`) |
+| :---: | :---: | :---: |
+| <img src="assets/images/logo.jpg" alt="Logo Normal" width="180"/> | <img src="assets/images/christmas_logo.jpg" alt="Logo Navidad" width="180"/> | <img src="assets/images/cinema_world_day_logo.jpg" alt="Logo Día del Cine" width="180"/> |
+
+| San Valentín (`valentine_logo.jpg`) | Halloween (`halloween_logo.jpg`) | Aniversario (`aniversary_logo.jpg`) |
+| :---: | :---: | :---: |
+| <img src="assets/images/valentine_logo.jpg" alt="Logo San Valentín" width="180"/> | <img src="assets/images/halloween_logo.jpg" alt="Logo Halloween" width="180"/> | <img src="assets/images/aniversary_logo.jpg" alt="Logo Aniversario" width="180"/> |
+
+---
+
 ## Guía de Instalación y Ejecución
 
 ### Requisitos Previos

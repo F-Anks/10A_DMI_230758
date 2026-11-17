@@ -38,16 +38,10 @@ class SearchMovieDelegate extends SearchDelegate<Movie?>{
     if ( _debounceTimer?.isActive ?? false ) _debounceTimer!.cancel();
 
     _debounceTimer = Timer(const Duration( milliseconds: 500 ), () async {
-      // if ( query.isEmpty ) {
-      //   debouncedMovies.add([]);
-      //   return;
-      // }
-
       final movies = await searchMovies( query );
       initialMovies = movies;
       debouncedMovies.add(movies);
       isLoadingStream.add(false);
-
     });
 
   }
@@ -73,10 +67,6 @@ class SearchMovieDelegate extends SearchDelegate<Movie?>{
       },
     );
   }
-
-
-  // @override
-  // String get searchFieldLabel => 'Buscar película';
 
   @override
   List<Widget>? buildActions(BuildContext context) {

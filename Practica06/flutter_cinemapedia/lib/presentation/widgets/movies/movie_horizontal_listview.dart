@@ -86,7 +86,6 @@ class _Slide extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //* Imagen
           SizedBox(
             width: 150,
             child: ClipRRect(
@@ -103,10 +102,7 @@ class _Slide extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 5),
-
-          //* Title
           SizedBox(
             width: 150,
             child: Text(
@@ -115,8 +111,6 @@ class _Slide extends StatelessWidget {
               style: textStyles.titleSmall,
             ),
           ),
-
-          //* Rating
           MovieRating(voteAverage: movie.voteAverage),
         ],
       ),

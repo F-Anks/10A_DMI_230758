@@ -72,19 +72,10 @@ class _MovieDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        //* Titulo, OverView y Rating
         _TitleAndOverview(movie: movie, size: size, textStyles: textStyles),
-
-        //* Generos de la película
         _Genres(movie: movie),
-
-        //* Actores de la película
         ActorsByMovie(movieId: movie.id.toString()),
-
-        //* Videos de la película (si tiene)
         VideosFromMovie(movieId: movie.id),
-
-        //* Películas similares
         SimilarMovies(movieId: movie.id),
       ],
     );
@@ -356,7 +347,6 @@ class _CustomSliverAppBar extends ConsumerWidget {
               ),
             ),
 
-            //* Favorite Gradient Background
             const _CustomGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
@@ -366,8 +356,6 @@ class _CustomSliverAppBar extends ConsumerWidget {
                 Colors.transparent,
               ],
             ),
-
-            //* Back arrow background
             const _CustomGradient(
               begin: Alignment.topLeft,
               stops: [0.0, 0.3],
