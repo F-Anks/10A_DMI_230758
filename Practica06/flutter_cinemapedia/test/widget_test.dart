@@ -1,5 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:cinemapedia/config/helpers/age_rating.dart';
 import 'package:cinemapedia/config/helpers/logo_helper.dart';
+import 'package:cinemapedia/config/helpers/media_id.dart';
+import 'package:cinemapedia/config/i18n/app_language.dart';
+import 'package:cinemapedia/config/i18n/app_strings.dart';
 
 void main() {
   group('LogoHelper seasonal date rules', () {
@@ -69,6 +73,102 @@ void main() {
       expect(theme.season, Season.normal);
       expect(theme.logoPath, 'assets/images/logo.jpg');
       expect(theme.soundPath, 'sounds/sound2.mp3');
+    });
+  });
+
+  group('MediaId helpers', () {
+    test('codifica y decodifica IDs de series sin colisionar con películas', () {
+      const tmdbId = 1396;
+      final seriesId = MediaId.fromSeries(tmdbId);
+
+      expect(MediaId.isSeries(tmdbId), isFalse);
+      expect(MediaId.isSeries(seriesId), isTrue);
+      expect(MediaId.tmdbId(tmdbId), tmdbId);
+      expect(MediaId.tmdbId(seriesId), tmdbId);
+      expect(MediaId.kind(tmdbId), 'movie');
+      expect(MediaId.kind(seriesId), 'tv');
+    });
+  });
+
+  group('AgeRatings rules', () {
+    test('resuelve certificación directa para MX, US y DE', () {
+      const sample = {'MX': 'b15', 'US': 'PG-13', 'DE': '12'};
+      expect(
+        AgeRatings.resolveForCountry(countryCode: 'MX', byCountry: sample),
+        'B15',
+      );
+      expect(
+        AgeRatings.resolveForCountry(countryCode: 'US', byCountry: sample),
+        'PG-13',
+      );
+      expect(
+        AgeRatings.resolveForCountry(countryCode: 'DE', byCountry: sample),
+        '12',
+      );
+    });
+
+    test('CN devuelve NR cuando no existe certificación local', () {
+      expect(
+        AgeRatings.resolveForCountry(
+          countryCode: 'CN',
+          byCountry: const {'US': 'R'},
+        ),
+        'NR',
+      );
+    });
+
+    test('EG aproxima desde US si no existe certificación egipcia directa', () {
+      expect(
+        AgeRatings.resolveForCountry(
+          countryCode: 'EG',
+          byCountry: const {'US': 'R'},
+        ),
+        '+16',
+      );
+      expect(
+        AgeRatings.resolveForCountry(
+          countryCode: 'EG',
+          byCountry: const {'US': 'TV-MA'},
+        ),
+        '+18',
+      );
+      expect(
+        AgeRatings.resolveForCountry(
+          countryCode: 'EG',
+          byCountry: const {'EG': '+12', 'US': 'R'},
+        ),
+        '+12',
+      );
+    });
+
+    test('clasifica niveles correctamente', () {
+      expect(AgeRatings.classify('G'), AgeRatingLevel.allAges);
+      expect(AgeRatings.classify('PG-13'), AgeRatingLevel.teen);
+      expect(AgeRatings.classify('B15'), AgeRatingLevel.mature);
+      expect(AgeRatings.classify('TV-MA'), AgeRatingLevel.adult);
+      expect(AgeRatings.classify('NR'), AgeRatingLevel.unrated);
+    });
+  });
+
+  group('i18n languages & strings', () {
+    test('expone los 5 idiomas y cadenas no vacías', () {
+      expect(AppLanguages.all.length, 5);
+      expect(
+        AppLanguages.all.map((l) => l.apiCode),
+        ['es-MX', 'en-US', 'de-DE', 'zh-CN', 'ar-EG'],
+      );
+      expect(AppLanguages.fromApiCode('unknown'), AppLanguages.mexico);
+
+      for (final lang in AppLanguages.all) {
+        final s = AppStrings.byCode(lang.code);
+        expect(s.home, isNotEmpty);
+        expect(s.movies, isNotEmpty);
+        expect(s.series, isNotEmpty);
+        expect(s.ageRating, isNotEmpty);
+        expect(s.settings, isNotEmpty);
+        expect(s.loaderMessagesMovies, isNotEmpty);
+        expect(s.loaderMessagesSeries, isNotEmpty);
+      }
     });
   });
 }
