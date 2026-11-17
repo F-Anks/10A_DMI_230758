@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen>
     }
 
     return Scaffold(
+      drawer: const SideMenu(),
       body: PageView(
         //* Esto evitará que rebote
         physics: const NeverScrollableScrollPhysics(),

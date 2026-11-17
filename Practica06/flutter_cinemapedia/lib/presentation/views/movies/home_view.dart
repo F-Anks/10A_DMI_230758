@@ -87,6 +87,8 @@ class HomeViewState extends ConsumerState<HomeView>
       slivers: [
         const SliverAppBar(
           floating: true,
+          automaticallyImplyLeading: false,
+          titleSpacing: 0,
           title: CustomAppbar(),
         ),
         SliverList(

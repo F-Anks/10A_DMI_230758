@@ -16,22 +16,48 @@ class CustomAppbar extends ConsumerWidget {
     final colors = Theme.of(context).colorScheme;
     final titleStyle = Theme.of(context).textTheme.titleMedium;
     final isSeries = ref.watch(catalogTypeProvider) == CatalogType.series;
+    final activeLanguage = ref.watch(languageProvider);
 
     return SafeArea(
       bottom: false,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 6),
         child: SizedBox(
           width: double.infinity,
           child: Row(
             children: [
+              IconButton(
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                icon: const Icon(Icons.menu_rounded),
+                tooltip: t.settings,
+              ),
               Icon(
                 isSeries ? Icons.live_tv_outlined : Icons.movie_outlined,
                 color: colors.primary,
               ),
-              const SizedBox(width: 5),
+              const SizedBox(width: 6),
               Text('CinePedia', style: titleStyle),
               const Spacer(),
+              InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () => Scaffold.of(context).openDrawer(),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: colors.surfaceContainerHighest.withValues(alpha: 0.7),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    activeLanguage.country,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: colors.primary,
+                    ),
+                  ),
+                ),
+              ),
               IconButton(
                 onPressed: () {
                   final searchedMovies = ref.read(searchedMoviesProvider);
