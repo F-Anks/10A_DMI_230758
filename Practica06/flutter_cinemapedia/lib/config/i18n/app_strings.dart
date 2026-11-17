@@ -37,6 +37,10 @@ class AppStrings {
   final String series;
   final String language;
   final String chooseLanguage;
+  final String themeSection;
+  final String darkMode;
+  final String lightMode;
+  final List<String> seasonThemeNames;
 
   const AppStrings({
     required this.home,
@@ -73,6 +77,10 @@ class AppStrings {
     required this.series,
     required this.language,
     required this.chooseLanguage,
+    required this.themeSection,
+    required this.darkMode,
+    required this.lightMode,
+    required this.seasonThemeNames,
   });
 
   static AppStrings of(BuildContext context) {
@@ -131,6 +139,17 @@ class AppStrings {
     series: 'Series',
     language: 'Idioma',
     chooseLanguage: 'Idioma de la app y del catálogo',
+    themeSection: 'Tema de la interfaz',
+    darkMode: 'Oscuro',
+    lightMode: 'Claro',
+    seasonThemeNames: [
+      'Normal',
+      'Navidad',
+      'Día del Cine',
+      'San Valentín',
+      'Halloween',
+      'Aniversario',
+    ],
   );
 
   static const _en = AppStrings(
@@ -182,6 +201,17 @@ class AppStrings {
     series: 'Series',
     language: 'Language',
     chooseLanguage: 'App and catalog language',
+    themeSection: 'Interface theme',
+    darkMode: 'Dark',
+    lightMode: 'Light',
+    seasonThemeNames: [
+      'Default',
+      'Christmas',
+      'Cinema Day',
+      'Valentine',
+      'Halloween',
+      'Anniversary',
+    ],
   );
 
   static const _de = AppStrings(
@@ -233,6 +263,17 @@ class AppStrings {
     series: 'Serien',
     language: 'Sprache',
     chooseLanguage: 'App- und Katalogsprache',
+    themeSection: 'App-Design',
+    darkMode: 'Dunkel',
+    lightMode: 'Hell',
+    seasonThemeNames: [
+      'Standard',
+      'Weihnachten',
+      'Kinotag',
+      'Valentinstag',
+      'Halloween',
+      'Jubiläum',
+    ],
   );
 
   static const _zh = AppStrings(
@@ -284,6 +325,17 @@ class AppStrings {
     series: '剧集',
     language: '语言',
     chooseLanguage: '应用与目录语言',
+    themeSection: '界面主题',
+    darkMode: '深色',
+    lightMode: '浅色',
+    seasonThemeNames: [
+      '默认',
+      '圣诞节',
+      '电影日',
+      '情人节',
+      '万圣节',
+      '周年庆',
+    ],
   );
 
   static const _ar = AppStrings(
@@ -335,6 +387,17 @@ class AppStrings {
     series: 'مسلسلات',
     language: 'اللغة',
     chooseLanguage: 'لغة التطبيق والبيانات',
+    themeSection: 'مظهر التطبيق',
+    darkMode: 'داكن',
+    lightMode: 'فاتح',
+    seasonThemeNames: [
+      'عادي',
+      'الكريسماس',
+      'يوم السينما',
+      'عيد الحب',
+      'الهالوين',
+      'الذكرى السنوية',
+    ],
   );
 
   static const Map<String, AppStrings> _values = {

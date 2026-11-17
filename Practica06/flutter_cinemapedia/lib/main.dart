@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:cinemapedia/config/i18n/app_language.dart';
 import 'package:cinemapedia/config/router/app_router.dart';
-import 'package:cinemapedia/config/theme/app_theme.dart';
 import 'package:cinemapedia/presentation/providers/providers.dart';
 
 Future<void> main() async {
@@ -33,12 +32,13 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLanguage = ref.watch(languageProvider);
+    final appTheme = ref.watch(themeNotifierProvider);
 
     return MaterialApp.router(
       title: 'CinePedia',
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme().getTheme(),
+      theme: appTheme.getTheme(),
       locale: currentLanguage.locale,
       supportedLocales: AppLanguages.all.map((lang) => lang.locale),
       localizationsDelegates: const [

@@ -5,6 +5,7 @@ import 'package:cinemapedia/config/helpers/logo_helper.dart';
 import 'package:cinemapedia/config/helpers/media_id.dart';
 import 'package:cinemapedia/config/i18n/app_language.dart';
 import 'package:cinemapedia/config/i18n/app_strings.dart';
+import 'package:cinemapedia/config/theme/app_theme.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/presentation/widgets/movies/movies_slideshow.dart';
 
@@ -181,7 +182,21 @@ void main() {
         expect(s.settings, isNotEmpty);
         expect(s.loaderMessagesMovies, isNotEmpty);
         expect(s.loaderMessagesSeries, isNotEmpty);
+        expect(s.themeSection, isNotEmpty);
+        expect(s.seasonThemeNames.length, seasonThemeColors.length);
       }
+    });
+  });
+
+  group('AppTheme configuration', () {
+    test('permite alternar entre modo oscuro/claro y colores de temporada', () {
+      const darkDefault = AppTheme();
+      expect(darkDefault.getTheme().brightness, Brightness.dark);
+
+      final lightHalloween =
+          darkDefault.copyWith(isDarkmode: false, selectedColor: 4);
+      expect(lightHalloween.getTheme().brightness, Brightness.light);
+      expect(lightHalloween.selectedColor, 4);
     });
   });
 
