@@ -35,6 +35,19 @@ class AgeRatings {
     return trimmed.toUpperCase();
   }
 
+  /// Formatea el código de clasificación para mostrarlo de forma consistente,
+  /// agregando el prefijo `FSK` a clasificaciones numéricas alemanas (`DE`).
+  static String normalizeForCountry(String country, String raw) {
+    final code = normalize(raw);
+    if (code == 'NR') return 'NR';
+
+    if (country.toUpperCase() == 'DE' &&
+        const {'0', '6', '12', '16', '18'}.contains(code)) {
+      return 'FSK $code';
+    }
+    return code;
+  }
+
   /// Resuelve la clasificación efectiva dado un mapa `{iso_3166_1: certification}`.
   static String resolveForCountry({
     required String countryCode,
@@ -49,14 +62,20 @@ class AgeRatings {
       return egyptFromUs[us] ?? (us.isEmpty ? 'NR' : normalize(us));
     }
 
-    if (direct.isNotEmpty) return normalize(direct);
+    if (direct.isNotEmpty) return normalizeForCountry(country, direct);
     return 'NR';
   }
 
   /// Clasifica el nivel de restricción para estilizar la insignia sin perder
   /// coherencia visual entre países (MX, US, DE, CN, EG).
   static AgeRatingLevel classify(String certification) {
-    final code = certification.trim().toUpperCase();
+    var code = certification.trim().toUpperCase();
+    if (code.startsWith('FSK ')) {
+      code = code.substring(4).trim();
+    } else if (code.startsWith('FSK-')) {
+      code = code.substring(4).trim();
+    }
+
     if (code.isEmpty || code == 'NR' || code == 'S/C') {
       return AgeRatingLevel.unrated;
     }

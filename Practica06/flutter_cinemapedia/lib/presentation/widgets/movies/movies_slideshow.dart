@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -17,13 +19,17 @@ class MoviesSlideshow extends StatefulWidget {
 }
 
 class _MoviesSlideshowState extends State<MoviesSlideshow> {
+  static const _autoplayInterval = Duration(seconds: 4);
+
   late final SwiperController _controller;
+  Timer? _autoplayTimer;
   int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _controller = SwiperController();
+    _restartAutoplay();
   }
 
   @override
@@ -32,12 +38,40 @@ class _MoviesSlideshowState extends State<MoviesSlideshow> {
     if (widget.movies.isNotEmpty && _currentIndex >= widget.movies.length) {
       _currentIndex = 0;
     }
+    if (oldWidget.movies.length != widget.movies.length) {
+      _restartAutoplay();
+    }
   }
 
   @override
   void dispose() {
+    _stopAutoplay();
     _controller.dispose();
     super.dispose();
+  }
+
+  void _stopAutoplay() {
+    _autoplayTimer?.cancel();
+    _autoplayTimer = null;
+  }
+
+  void _restartAutoplay() {
+    _stopAutoplay();
+    if (widget.movies.length <= 1) return;
+
+    _autoplayTimer = Timer.periodic(_autoplayInterval, (_) {
+      if (!mounted) return;
+      _advanceNext();
+    });
+  }
+
+  void _advanceNext() {
+    if (widget.movies.length <= 1) return;
+    if (_currentIndex >= widget.movies.length - 1) {
+      _controller.move(0);
+    } else {
+      _controller.next();
+    }
   }
 
   void _goPrevious() {
@@ -47,15 +81,12 @@ class _MoviesSlideshowState extends State<MoviesSlideshow> {
     } else {
       _controller.previous();
     }
+    _restartAutoplay();
   }
 
   void _goNext() {
-    if (widget.movies.length <= 1) return;
-    if (_currentIndex >= widget.movies.length - 1) {
-      _controller.move(0);
-    } else {
-      _controller.next();
-    }
+    _advanceNext();
+    _restartAutoplay();
   }
 
   @override
@@ -72,23 +103,34 @@ class _MoviesSlideshowState extends State<MoviesSlideshow> {
         textDirection: TextDirection.ltr,
         child: Stack(
           children: [
-            Swiper(
-              controller: _controller,
-              loop: false,
-              viewportFraction: 0.8,
-              scale: 0.9,
-              autoplay: hasMultiple,
-              onIndexChanged: (index) => _currentIndex = index,
-              pagination: SwiperPagination(
-                margin: const EdgeInsets.only(top: 0),
-                builder: DotSwiperPaginationBuilder(
-                  activeColor: colors.primary,
-                  color: colors.secondary,
+            NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification is ScrollStartNotification &&
+                    notification.dragDetails != null) {
+                  _stopAutoplay();
+                } else if (notification is ScrollEndNotification) {
+                  _restartAutoplay();
+                }
+                return false;
+              },
+              child: Swiper(
+                controller: _controller,
+                loop: false,
+                viewportFraction: 0.8,
+                scale: 0.9,
+                autoplay: false,
+                onIndexChanged: (index) => _currentIndex = index,
+                pagination: SwiperPagination(
+                  margin: const EdgeInsets.only(top: 0),
+                  builder: DotSwiperPaginationBuilder(
+                    activeColor: colors.primary,
+                    color: colors.secondary,
+                  ),
                 ),
+                itemCount: widget.movies.length,
+                itemBuilder: (context, index) =>
+                    _Slide(movie: widget.movies[index]),
               ),
-              itemCount: widget.movies.length,
-              itemBuilder: (context, index) =>
-                  _Slide(movie: widget.movies[index]),
             ),
             if (hasMultiple) ...[
               Positioned(
@@ -176,6 +218,8 @@ class _Slide extends StatelessWidget {
       ],
     );
 
+    final overview = movie.overview.trim();
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
       child: DecoratedBox(
@@ -184,10 +228,72 @@ class _Slide extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           child: GestureDetector(
             onTap: () => context.push('/home/0/movie/${movie.id}'),
-            child: FadeInImage(
-              fit: BoxFit.cover,
-              placeholder: const AssetImage('assets/loaders/bottle-loader.gif'),
-              image: NetworkImage(movie.backdropPath),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                FadeInImage(
+                  fit: BoxFit.cover,
+                  placeholder:
+                      const AssetImage('assets/loaders/bottle-loader.gif'),
+                  image: NetworkImage(movie.backdropPath),
+                  imageErrorBuilder: (context, _, __) => ColoredBox(
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  ),
+                ),
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.35, 1.0],
+                      colors: [
+                        Colors.transparent,
+                        Color(0xD9000000),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 14,
+                  right: 14,
+                  bottom: 10,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        movie.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(color: Colors.black87, blurRadius: 4),
+                          ],
+                        ),
+                      ),
+                      if (overview.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          overview,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 11.5,
+                            height: 1.2,
+                            shadows: [
+                              Shadow(color: Colors.black87, blurRadius: 3),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),

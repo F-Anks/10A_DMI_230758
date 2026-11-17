@@ -42,6 +42,7 @@ class SideMenu extends ConsumerWidget {
               label: t.movies,
               selected: catalogType == CatalogType.movies,
               onTap: () {
+                ref.read(searchQueryProvider.notifier).state = '';
                 ref.read(catalogTypeProvider.notifier).state =
                     CatalogType.movies;
                 Navigator.of(context).pop();
@@ -53,6 +54,7 @@ class SideMenu extends ConsumerWidget {
               label: t.series,
               selected: catalogType == CatalogType.series,
               onTap: () {
+                ref.read(searchQueryProvider.notifier).state = '';
                 ref.read(catalogTypeProvider.notifier).state =
                     CatalogType.series;
                 Navigator.of(context).pop();

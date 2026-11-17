@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cinemapedia/config/helpers/age_rating.dart';
 import 'package:cinemapedia/config/helpers/logo_helper.dart';
 import 'package:cinemapedia/config/helpers/media_id.dart';
 import 'package:cinemapedia/config/i18n/app_language.dart';
 import 'package:cinemapedia/config/i18n/app_strings.dart';
+import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/presentation/widgets/movies/movies_slideshow.dart';
 
 void main() {
   group('LogoHelper seasonal date rules', () {
@@ -103,7 +106,14 @@ void main() {
       );
       expect(
         AgeRatings.resolveForCountry(countryCode: 'DE', byCountry: sample),
-        '12',
+        'FSK 12',
+      );
+      expect(
+        AgeRatings.resolveForCountry(
+          countryCode: 'DE',
+          byCountry: const {'DE': 'FSK 16'},
+        ),
+        'FSK 16',
       );
     });
 
@@ -144,8 +154,11 @@ void main() {
     test('clasifica niveles correctamente', () {
       expect(AgeRatings.classify('G'), AgeRatingLevel.allAges);
       expect(AgeRatings.classify('PG-13'), AgeRatingLevel.teen);
+      expect(AgeRatings.classify('FSK 12'), AgeRatingLevel.teen);
       expect(AgeRatings.classify('B15'), AgeRatingLevel.mature);
+      expect(AgeRatings.classify('FSK 16'), AgeRatingLevel.mature);
       expect(AgeRatings.classify('TV-MA'), AgeRatingLevel.adult);
+      expect(AgeRatings.classify('FSK 18'), AgeRatingLevel.adult);
       expect(AgeRatings.classify('NR'), AgeRatingLevel.unrated);
     });
   });
@@ -169,6 +182,55 @@ void main() {
         expect(s.loaderMessagesMovies, isNotEmpty);
         expect(s.loaderMessagesSeries, isNotEmpty);
       }
+    });
+  });
+
+  group('MoviesSlideshow widget', () {
+    Movie buildSampleMovie(int id, String title, String overview) => Movie(
+          adult: false,
+          backdropPath: 'https://example.com/$id.jpg',
+          genreIds: const ['Acción'],
+          id: id,
+          originalLanguage: 'es',
+          originalTitle: title,
+          overview: overview,
+          popularity: 100,
+          posterPath: 'https://example.com/p$id.jpg',
+          releaseDate: DateTime(2026, 11, 16),
+          title: title,
+          video: false,
+          voteAverage: 8.5,
+          voteCount: 500,
+        );
+
+    testWidgets('muestra titulo, sinopsis y flechas laterales con navegacion circular',
+        (tester) async {
+      final movies = [
+        buildSampleMovie(1, 'Película Uno', 'Sinopsis corta uno'),
+        buildSampleMovie(2, 'Película Dos', 'Sinopsis corta dos'),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MoviesSlideshow(movies: movies),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Película Uno'), findsOneWidget);
+      expect(find.text('Sinopsis corta uno'), findsOneWidget);
+      expect(find.byIcon(Icons.chevron_left_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.chevron_right_rounded), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.chevron_right_rounded));
+      await tester.pumpAndSettle();
+      expect(find.text('Película Dos'), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.chevron_right_rounded));
+      await tester.pumpAndSettle();
+      expect(find.text('Película Uno'), findsOneWidget);
     });
   });
 }
