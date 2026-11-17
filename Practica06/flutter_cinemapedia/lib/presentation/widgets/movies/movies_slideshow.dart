@@ -254,6 +254,11 @@ class _Slide extends StatelessWidget {
                   ),
                 ),
                 Positioned(
+                  top: 10,
+                  right: 12,
+                  child: _SlideRateBadge(voteAverage: movie.voteAverage),
+                ),
+                Positioned(
                   left: 14,
                   right: 14,
                   bottom: 10,
@@ -297,6 +302,54 @@ class _Slide extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SlideRateBadge extends StatelessWidget {
+  final double voteAverage;
+
+  const _SlideRateBadge({required this.voteAverage});
+
+  @override
+  Widget build(BuildContext context) {
+    final stars = (voteAverage / 2).clamp(0.0, 5.0);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.65),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.18),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < 5; i++)
+            Icon(
+              stars >= i + 0.75
+                  ? Icons.star_rounded
+                  : stars >= i + 0.25
+                      ? Icons.star_half_rounded
+                      : Icons.star_outline_rounded,
+              size: 13.5,
+              color: stars >= i + 0.25
+                  ? Colors.amber.shade400
+                  : Colors.white38,
+            ),
+          const SizedBox(width: 5),
+          Text(
+            voteAverage.toStringAsFixed(1),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 11.5,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }

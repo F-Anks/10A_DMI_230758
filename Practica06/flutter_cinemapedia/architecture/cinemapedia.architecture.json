@@ -1,0 +1,601 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Arquitectura de CinePedia",
+    "output": "cinemapedia-architecture.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/F-Anks/10A_DMI_230758.git",
+      "revision": "e3a36d28ed3c5a3b17383ad5d45e3def2837d3c6"
+    },
+    "viewBox": [
+      1350,
+      735
+    ],
+    "views": [
+      {
+        "id": "clean-architecture",
+        "label": "Clean Architecture",
+        "focus": [
+          "screens",
+          "state",
+          "contracts",
+          "repositories",
+          "datasources",
+          "tmdb",
+          "entities"
+        ],
+        "note": "Riverpod: nowPlayingMovies/popularMovies/upcomingMovies/topRatedMovies; onTheAirSeries/airingTodaySeries/popularSeries/topRatedSeries."
+      },
+      {
+        "id": "catalogo-idiomas",
+        "label": "Catálogo e idiomas",
+        "focus": [
+          "screens",
+          "state",
+          "configuration",
+          "datasources",
+          "tmdb"
+        ],
+        "note": "5 idiomas LTR: es-MX/en-US/de-DE/zh-CN/ar-EG; fallback en-US; MediaId=-id series; AgeRatings: MX/US/DE, CN=NR, EG≈US."
+      },
+      {
+        "id": "detalle-y-video",
+        "label": "Detalle y video",
+        "focus": [
+          "screens",
+          "widgets",
+          "state",
+          "datasources",
+          "mappers",
+          "tmdb",
+          "youtube"
+        ],
+        "note": "Modelos TMDB: MovieDbResponse, SeriesDbResponse, MovieDetails, SeriesDetails, CreditsResponse y MoviedbVideosResponse."
+      },
+      {
+        "id": "datos-locales",
+        "label": "Favoritos y preferencias",
+        "focus": [
+          "state",
+          "contracts",
+          "repositories",
+          "isar",
+          "configuration",
+          "preferences",
+          "entities"
+        ],
+        "note": "catalogTypeProvider, languageProvider, sharedPreferencesProvider, themeNotifierProvider; Isar favoritos; AppTheme: claro/oscuro + 6 colores."
+      },
+      {
+        "id": "iconos-estacionales",
+        "label": "Tema e iconos nativos",
+        "focus": [
+          "screens",
+          "widgets",
+          "configuration",
+          "preferences",
+          "android"
+        ],
+        "note": "DynamicIconHelper usa com.example.flutter_cinemapedia/dynamic_icon; MainActivity activa 1 de 7 activity-alias en onStop()."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "screens",
+      "type": "frontend",
+      "label": "Pantallas CinePedia",
+      "sublabel": "Splash · detalle",
+      "tag": "Flutter UI",
+      "pos": [
+        30,
+        125
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/presentation/screens/movies/splash_screen.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/presentation/screens/movies/home_screen.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/presentation/screens/movies/movie_screen.dart"
+        }
+      ]
+    },
+    {
+      "id": "widgets",
+      "type": "frontend",
+      "label": "Vistas y widgets",
+      "sublabel": "Catálogo · búsqueda",
+      "tag": "Presentación",
+      "pos": [
+        30,
+        345
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/presentation/views/movies/home_view.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/presentation/widgets/widgets.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/presentation/delegates/search_movie_delegate.dart"
+        }
+      ]
+    },
+    {
+      "id": "youtube",
+      "type": "external",
+      "label": "YouTube Player",
+      "sublabel": "Vídeos bajo demanda",
+      "pos": [
+        30,
+        565
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/presentation/widgets/videos/videos_from_movie.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/pubspec.yaml"
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "type": "backend",
+      "label": "Estado Riverpod",
+      "sublabel": "Catálogo dual · estado",
+      "tag": "flutter_riverpod",
+      "pos": [
+        251,
+        125
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/presentation/providers/movies/movies_providers.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/presentation/providers/series/series_providers.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/presentation/providers/providers.dart"
+        }
+      ]
+    },
+    {
+      "id": "configuration",
+      "type": "backend",
+      "label": "Configuración de app",
+      "sublabel": "5 idiomas · temas",
+      "tag": "go_router",
+      "pos": [
+        251,
+        345
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/config/router/app_router.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/config/i18n/app_language.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/config/theme/app_theme.dart"
+        }
+      ]
+    },
+    {
+      "id": "preferences",
+      "type": "database",
+      "label": "SharedPreferences",
+      "sublabel": "Idioma · tema",
+      "pos": [
+        251,
+        565
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/main.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/presentation/providers/settings/shared_preferences_provider.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/presentation/providers/settings/theme_provider.dart"
+        }
+      ]
+    },
+    {
+      "id": "contracts",
+      "type": "backend",
+      "label": "Contratos de dominio",
+      "sublabel": "Movies · Actors · Storage",
+      "tag": "DIP",
+      "pos": [
+        471,
+        125
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/domain/repositories/movies_repository.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/domain/repositories/actors_repository.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/domain/repositories/local_storage_repository.dart"
+        }
+      ]
+    },
+    {
+      "id": "entities",
+      "type": "backend",
+      "label": "Entidades de dominio",
+      "sublabel": "Movie · Actor · Video",
+      "pos": [
+        1132,
+        345
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/domain/entities/movie.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/domain/entities/actor.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/domain/entities/video.dart"
+        }
+      ]
+    },
+    {
+      "id": "repositories",
+      "type": "backend",
+      "label": "Repositorios impl.",
+      "sublabel": "Movie · Actor · LocalStorage",
+      "pos": [
+        692,
+        125
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/infrastructure/repositories/movie_repository_impl.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/infrastructure/repositories/actor_repository_impl.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/infrastructure/repositories/local_storage_repository_impl.dart"
+        }
+      ]
+    },
+    {
+      "id": "isar",
+      "type": "database",
+      "label": "Isar local",
+      "sublabel": "Favoritos Movie",
+      "pos": [
+        692,
+        345
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/infrastructure/datasources/isar_datasource.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/domain/entities/movie.g.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/domain/datasources/local_storage_datasource.dart"
+        }
+      ]
+    },
+    {
+      "id": "android",
+      "type": "backend",
+      "label": "Iconos nativos Android",
+      "sublabel": "Kotlin · 7 aliases",
+      "tag": "MethodChannel",
+      "pos": [
+        692,
+        565
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/config/helpers/dynamic_icon_helper.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/android/app/src/main/kotlin/com/example/flutter_cinemapedia/MainActivity.kt"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/android/app/src/main/AndroidManifest.xml"
+        }
+      ]
+    },
+    {
+      "id": "datasources",
+      "type": "backend",
+      "label": "Datasources TMDB",
+      "sublabel": "Dio · API dual",
+      "tag": "flutter_dotenv",
+      "pos": [
+        912,
+        125
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/infrastructure/datasources/moviedb_datasource.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/infrastructure/datasources/actor_moviedb_datasource.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/config/constants/environment.dart"
+        }
+      ]
+    },
+    {
+      "id": "mappers",
+      "type": "backend",
+      "label": "Mappers y modelos",
+      "sublabel": "DTOs TMDB",
+      "pos": [
+        912,
+        345
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/infrastructure/mappers/mappers.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/infrastructure/models/models.dart"
+        },
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/infrastructure/mappers/movie_mapper.dart"
+        }
+      ]
+    },
+    {
+      "id": "tmdb",
+      "type": "external",
+      "label": "The Movie DB API",
+      "sublabel": "REST v3 · api.themoviedb.org/3",
+      "pos": [
+        1132,
+        125
+      ],
+      "size": [
+        167,
+        108
+      ],
+      "sources": [
+        {
+          "path": "Practica06/flutter_cinemapedia/lib/infrastructure/datasources/moviedb_datasource.dart"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "screens-state",
+      "from": "screens",
+      "to": "state",
+      "label": "lee estado",
+      "variant": "emphasis"
+    },
+    {
+      "id": "screens-widgets",
+      "from": "screens",
+      "to": "widgets",
+      "label": "compone",
+      "labelAt": [
+        114,
+        247
+      ]
+    },
+    {
+      "id": "widgets-state",
+      "from": "widgets",
+      "to": "state",
+      "label": "consulta"
+    },
+    {
+      "id": "state-contracts",
+      "from": "state",
+      "to": "contracts",
+      "label": "usa contratos",
+      "labelAt": [
+        445,
+        247
+      ]
+    },
+    {
+      "id": "contracts-repositories",
+      "from": "contracts",
+      "to": "repositories",
+      "label": "implementados en",
+      "labelAt": [
+        665,
+        247
+      ]
+    },
+    {
+      "id": "repositories-datasources",
+      "from": "repositories",
+      "to": "datasources",
+      "label": "delega"
+    },
+    {
+      "id": "datasources-tmdb",
+      "from": "datasources",
+      "to": "tmdb",
+      "label": "HTTPS · REST v3",
+      "labelAt": [
+        1106,
+        247
+      ],
+      "variant": "emphasis"
+    },
+    {
+      "id": "datasources-mappers",
+      "from": "datasources",
+      "to": "mappers",
+      "label": "mapea JSON",
+      "labelAt": [
+        996,
+        247
+      ]
+    },
+    {
+      "id": "mappers-entities",
+      "from": "mappers",
+      "to": "entities",
+      "label": "toEntity()",
+      "labelAt": [
+        1106,
+        467
+      ]
+    },
+    {
+      "id": "repositories-isar",
+      "from": "repositories",
+      "to": "isar",
+      "label": "favoritos",
+      "labelAt": [
+        775,
+        247
+      ]
+    },
+    {
+      "id": "widgets-youtube",
+      "from": "widgets",
+      "to": "youtube",
+      "label": "youtube_player_flutter",
+      "labelAt": [
+        114,
+        467
+      ]
+    },
+    {
+      "id": "configuration-preferences",
+      "from": "configuration",
+      "to": "preferences",
+      "label": "tema · idioma",
+      "labelAt": [
+        334,
+        467
+      ]
+    },
+    {
+      "id": "configuration-android",
+      "from": "configuration",
+      "to": "android",
+      "label": "MethodChannel"
+    },
+    {
+      "id": "configuration-datasources",
+      "from": "configuration",
+      "to": "datasources",
+      "label": "idioma · región",
+      "labelAt": [
+        441,
+        467
+      ],
+      "fromSide": "right",
+      "toSide": "left",
+      "via": [
+        [
+          441,
+          399
+        ],
+        [
+          441,
+          520
+        ],
+        [
+          882,
+          520
+        ],
+        [
+          882,
+          179
+        ]
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Presentación y navegación",
+      "items": [
+        "SplashScreen: animación estacional, audioplayers, icono dinámico y /home/0; HomeScreen: PageView/KeepAlive, Drawer y bottom nav; MovieScreen unifica películas/series.",
+        "HomeView: slideshow circular + tres listas; PopularView: MovieMasonry; FavoritesView: filtra MediaId.isSeries. SideMenu ajusta tipo, tema y cinco idiomas."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Contratos, datos y plataforma",
+      "items": [
+        "DIP: Movies/Actors/LocalStorage Repository y Datasource; impl. delegan a TMDB o Isar. Entidades: Movie (@collection), Actor y Video.",
+        "Dio/Environment (flutter_dotenv) → TMDB: /movie/*, /tv/*, /search/*, /similar, /videos, /release_dates, /content_ratings y créditos; fallback en-US. Mappers: MovieMapper, SeriesMapper, ActorMapper y VideoMapper."
+      ]
+    }
+  ]
+}

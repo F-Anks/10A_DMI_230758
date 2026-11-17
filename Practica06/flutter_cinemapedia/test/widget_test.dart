@@ -236,6 +236,9 @@ void main() {
 
       expect(find.text('Película Uno'), findsOneWidget);
       expect(find.text('Sinopsis corta uno'), findsOneWidget);
+      expect(find.text('8.5'), findsAtLeastNWidgets(1));
+      expect(find.byIcon(Icons.star_rounded), findsAtLeastNWidgets(4));
+      expect(find.byIcon(Icons.star_half_rounded), findsAtLeastNWidgets(1));
       expect(find.byIcon(Icons.chevron_left_rounded), findsOneWidget);
       expect(find.byIcon(Icons.chevron_right_rounded), findsOneWidget);
 
